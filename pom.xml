@@ -5,7 +5,7 @@
 
 	<groupId>org.bidib.jbidib.eu.hansolo</groupId>
 	<artifactId>SteelSeries</artifactId>
-	<version>3.9.31-SNAPSHOT</version>
+	<version>3.9.31.3</version>
 	<packaging>jar</packaging>
 
 	<name>SteelSeries</name>
