@@ -1,40 +1,18 @@
 package eu.hansolo.steelseries.tools;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.Font;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+
+import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author hansolo
  */
-public class UtilTest {
-
-    public UtilTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
+class UtilTest {
 
     /**
      * Test of getScaledInstance method, of class Util.
@@ -148,11 +126,16 @@ public class UtilTest {
         Util instance = Util.INSTANCE;
         Font expResult;
         try {
-            expResult = java.awt.Font.createFont(0, this.getClass().getResourceAsStream("/eu/hansolo/steelseries/resources/digital.ttf"));
+            expResult =
+                java.awt.Font
+                    .createFont(0,
+                        this.getClass().getResourceAsStream("/eu/hansolo/steelseries/resources/digital.ttf"));
             java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(expResult);
-        } catch (java.awt.FontFormatException exception) {
+        }
+        catch (java.awt.FontFormatException exception) {
             expResult = new java.awt.Font("Verdana", 1, 24);
-        } catch (java.io.IOException exception) {
+        }
+        catch (java.io.IOException exception) {
             expResult = new java.awt.Font("Verdana", 1, 24);
         }
 
