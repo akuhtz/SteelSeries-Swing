@@ -50,4 +50,15 @@ public enum NumberFormat {
     public String format(final Number NUMBER) {
         return DF.format(NUMBER);
     }
+
+    public String format(final Number NUMBER, final double maxValue) {
+        double value = NUMBER.doubleValue();
+
+        if (value == 0 || value == maxValue / 2 || value == maxValue) {
+            return DF.format(NUMBER);
+        }
+        else {
+            return "";
+        }
+    }
 }

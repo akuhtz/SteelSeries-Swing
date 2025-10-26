@@ -373,7 +373,11 @@ public enum TickmarkImageFactory {
                             case TANGENT:
 
                             default:
-                                G2.fill(UTIL.rotateTextAroundCenter(G2, numberFormat.format(valueCounter), (int) TEXT_POINT.getX(), (int) TEXT_POINT.getY(), (Math.PI - alpha + ticklabelRotationOffset)));
+                                String label = numberFormat.format(valueCounter, MAX_VALUE);
+
+                                if (!label.isEmpty()) {
+                                    G2.fill(UTIL.rotateTextAroundCenter(G2, label, (int) TEXT_POINT.getX(), (int) TEXT_POINT.getY(), (Math.PI - alpha + ticklabelRotationOffset)));
+                                }
                                 break;
                         }
                     }
@@ -775,10 +779,10 @@ public enum TickmarkImageFactory {
                         if (ORIENTATION == Orientation.VERTICAL) {
                             // Vertical orientation
                             textOffset = (float) (MAX_BOUNDS.getWidth() - currentBounds.getWidth());
-                            G2.drawString(numberFormat.format(valueCounter), 0.18f * WIDTH + textOffset, (float) (currentPos - currentBounds.getHeight() / 2.0 + currentBounds.getHeight()));
+                            G2.drawString(numberFormat.format(valueCounter, MAX_VALUE), 0.18f * WIDTH + textOffset, (float) (currentPos - currentBounds.getHeight() / 2.0 + currentBounds.getHeight()));
                         } else {
                             // Horizontal orientation
-                            G2.drawString(numberFormat.format(valueCounter), (float) (tickCounter * tickSpaceScaling - currentBounds.getWidth() / 3.0 + SCALE_BOUNDS.getX()), (float) (HEIGHT * 0.68 + 1.5 * currentBounds.getHeight()));
+                            G2.drawString(numberFormat.format(valueCounter, MAX_VALUE), (float) (tickCounter * tickSpaceScaling - currentBounds.getWidth() / 3.0 + SCALE_BOUNDS.getX()), (float) (HEIGHT * 0.68 + 1.5 * currentBounds.getHeight()));
                         }
                     }
 
