@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -366,6 +368,16 @@ public abstract class AbstractGauge extends JComponent implements ComponentListe
 
             fireStateChanged();
             propertyChangeSupport.firePropertyChange(VALUE_PROPERTY, model.getOldValue(), model.getValue());
+        }
+    }
+
+    @Override
+    public void repaint(final Rectangle r) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            super.repaint(getInnerBounds());
+        }
+        else {
+            SwingUtilities.invokeLater(() -> super.repaint(getInnerBounds()));
         }
     }
 
