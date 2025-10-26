@@ -27,24 +27,6 @@
  */
 package eu.hansolo.steelseries.gauges;
 
-import eu.hansolo.steelseries.tools.ColorDef;
-import eu.hansolo.steelseries.tools.ConicalGradientPaint;
-import eu.hansolo.steelseries.tools.CustomColorDef;
-import eu.hansolo.steelseries.tools.CustomGaugeType;
-import eu.hansolo.steelseries.tools.Direction;
-import eu.hansolo.steelseries.tools.ForegroundType;
-import eu.hansolo.steelseries.tools.FrameType;
-import eu.hansolo.steelseries.tools.GaugeType;
-import eu.hansolo.steelseries.tools.KnobStyle;
-import eu.hansolo.steelseries.tools.KnobType;
-import eu.hansolo.steelseries.tools.LcdColor;
-import eu.hansolo.steelseries.tools.NumberSystem;
-import eu.hansolo.steelseries.tools.Orientation;
-import eu.hansolo.steelseries.tools.PointerType;
-import eu.hansolo.steelseries.tools.PostPosition;
-import eu.hansolo.steelseries.tools.TicklabelOrientation;
-import eu.hansolo.steelseries.tools.Util;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -84,6 +66,23 @@ import org.pushingpixels.trident.ease.Sine;
 import org.pushingpixels.trident.ease.Spline;
 import org.pushingpixels.trident.ease.TimelineEase;
 
+import eu.hansolo.steelseries.tools.ColorDef;
+import eu.hansolo.steelseries.tools.ConicalGradientPaint;
+import eu.hansolo.steelseries.tools.CustomColorDef;
+import eu.hansolo.steelseries.tools.CustomGaugeType;
+import eu.hansolo.steelseries.tools.Direction;
+import eu.hansolo.steelseries.tools.ForegroundType;
+import eu.hansolo.steelseries.tools.FrameType;
+import eu.hansolo.steelseries.tools.GaugeType;
+import eu.hansolo.steelseries.tools.KnobStyle;
+import eu.hansolo.steelseries.tools.KnobType;
+import eu.hansolo.steelseries.tools.LcdColor;
+import eu.hansolo.steelseries.tools.NumberSystem;
+import eu.hansolo.steelseries.tools.Orientation;
+import eu.hansolo.steelseries.tools.PointerType;
+import eu.hansolo.steelseries.tools.PostPosition;
+import eu.hansolo.steelseries.tools.TicklabelOrientation;
+import eu.hansolo.steelseries.tools.Util;
 
 /**
  *
@@ -93,34 +92,56 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">
 
     protected static final float ANGLE_CONST = 1f / 360f;
+
     private final Rectangle INNER_BOUNDS;
+
     private final Rectangle GAUGE_BOUNDS;
+
     private final Rectangle FRAMELESS_BOUNDS;
+
     private final Point2D FRAMELESS_OFFSET;
+
     // Sections related
     private boolean transparentSectionsEnabled;
+
     private boolean transparentAreasEnabled;
+
     private boolean expandedSectionsEnabled;
+
     // Frame type related
     private Direction tickmarkDirection;
+
     // LED related variables
     private Point2D ledPosition;
+
     // User LED related variables
     private Point2D userLedPosition;
+
     // LCD related variables
     private String lcdUnitString;
+
     private double lcdValue;
+
     private String lcdInfoString = "";
+
     private Timeline lcdTimeline;
+
     private boolean lcdTextVisible;
+
     private Timer LCD_BLINKING_TIMER;
+
     // Animation related variables
     private Timeline timeline;
+
     private final TimelineEase STANDARD_EASING;
+
     private final TimelineEase RETURN_TO_ZERO_EASING;
+
     private TimelineCallback timelineCallback;
+
     // Alignment related
     private int horizontalAlignment;
+
     private int verticalAlignment;
 
     // </editor-fold>
@@ -144,8 +165,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         timeline = new Timeline(this);
         STANDARD_EASING = new Spline(0.5f);
         RETURN_TO_ZERO_EASING = new Sine();
-		horizontalAlignment = SwingConstants.CENTER;
-		verticalAlignment = SwingConstants.CENTER;
+        horizontalAlignment = SwingConstants.CENTER;
+        verticalAlignment = SwingConstants.CENTER;
         lcdTextVisible = true;
         LCD_BLINKING_TIMER = new Timer(500, this);
         addComponentListener(this);
@@ -154,45 +175,41 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
     /**
-     * Returns the enum that defines the type of the gauge
-     * TYPE1    a quarter gauge (90 deg)
-     * TYPE2    a two quarter gauge (180 deg)
-     * TYPE3    a three quarter gauge (270 deg)
-     * TYPE4    a four quarter gauge (300 deg)
-     * CUSTOM   see {@link #getCustomGaugeType() getCustomGaugeType}
+     * Returns the enum that defines the type of the gauge TYPE1 a quarter gauge (90 deg) TYPE2 a two quarter gauge (180
+     * deg) TYPE3 a three quarter gauge (270 deg) TYPE4 a four quarter gauge (300 deg) CUSTOM see
+     * {@link #getCustomGaugeType() getCustomGaugeType}
+     * 
      * @return the type of the gauge (90, 180, 270 or 300 deg)
      */
     public GaugeType getGaugeType() {
         return getModel().getGaugeType();
     }
-    
+
     /**
      * Returns the custom type of the radial gauge.
+     * 
      * @return the custom type of the radial gauge.
      */
     public CustomGaugeType getCustomGaugeType() {
         return getModel().getCustomGaugeType();
     }
-    
+
     /**
-     * Sets the custom radial type of the gauge.
-     * Set the gauge type to {@link GaugeType#CUSTOM CUSTOM}.
+     * Sets the custom radial type of the gauge. Set the gauge type to {@link GaugeType#CUSTOM CUSTOM}.
+     * 
      * @param CUSTOM_GAUGE_TYPE
      */
-    public void setCustomGaugeType(CustomGaugeType CUSTOM_GAUGE_TYPE)
-    {
+    public void setCustomGaugeType(CustomGaugeType CUSTOM_GAUGE_TYPE) {
         getModel().setCustomGaugeType(CUSTOM_GAUGE_TYPE);
         init(getInnerBounds().width, getInnerBounds().height);
         repaint(getInnerBounds());
     }
 
     /**
-     * Sets the type of the gauge
-     * TYPE1    a quarter gauge (90 deg)
-     * TYPE2    a two quarter gauge (180 deg)
-     * TYPE3    a three quarter gauge (270 deg)
-     * TYPE4    a four quarter gauge (300 deg)
-     * CUSTOM   set the {@link #setCustomGaugeType(CustomGaugeType) custom gauge type}.
+     * Sets the type of the gauge TYPE1 a quarter gauge (90 deg) TYPE2 a two quarter gauge (180 deg) TYPE3 a three
+     * quarter gauge (270 deg) TYPE4 a four quarter gauge (300 deg) CUSTOM set the
+     * {@link #setCustomGaugeType(CustomGaugeType) custom gauge type}.
+     * 
      * @param GAUGE_TYPE
      */
     public void setGaugeType(final GaugeType GAUGE_TYPE) {
@@ -202,8 +219,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the type of frame that is used for the radial gauge.
-     * It could be round our square.
+     * Returns the type of frame that is used for the radial gauge. It could be round our square.
+     * 
      * @return the type of frame that will be used for the radial gauge.
      */
     public FrameType getFrameType() {
@@ -211,8 +228,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Defines the type of frame that will be used for the radial gauge.
-     * It could be round our square.
+     * Defines the type of frame that will be used for the radial gauge. It could be round our square.
+     * 
      * @param FRAME_TYPE
      */
     public void setFrameType(final FrameType FRAME_TYPE) {
@@ -222,8 +239,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the type of foreground that is used for the radial gauge.
-     * There are three types available.
+     * Returns the type of foreground that is used for the radial gauge. There are three types available.
+     * 
      * @return the type of foreground that is will be used for the radial gauge
      */
     public ForegroundType getForegroundType() {
@@ -231,8 +248,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Defines the type of foreground that will be used for the radial gauge.
-     * There area three types available.
+     * Defines the type of foreground that will be used for the radial gauge. There area three types available.
+     * 
      * @param FOREGROUND_TYPE
      */
     public void setForegroundType(final ForegroundType FOREGROUND_TYPE) {
@@ -242,13 +259,10 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Uses trident animation library to animate
-     * the setting of the value.
-     * The method plays a defined trident timeline
-     * that calls the setValue(double value) method
-     * with a given easing behaviour and duration.
-     * You should always use this method to set the
-     * gauge to a given value.
+     * Uses trident animation library to animate the setting of the value. The method plays a defined trident timeline
+     * that calls the setValue(double value) method with a given easing behaviour and duration. You should always use
+     * this method to set the gauge to a given value.
+     * 
      * @param VALUE
      */
     public void setValueAnimated(final double VALUE) {
@@ -257,21 +271,22 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                 timeline.abort();
             }
 
-            final double TARGET_VALUE = VALUE < getMinValue() ? getMinValue() : (VALUE > getMaxValue() ? getMaxValue() : VALUE);
+            final double TARGET_VALUE =
+                VALUE < getMinValue() ? getMinValue() : (VALUE > getMaxValue() ? getMaxValue() : VALUE);
 
             if (!isAutoResetToZero()) {
                 timeline.removeCallback(timelineCallback);
                 timeline = new Timeline(this);
                 timeline.addPropertyToInterpolate("value", getValue(), TARGET_VALUE);
                 timeline.setEase(STANDARD_EASING);
-                //TIMELINE.setDuration((long) (getStdTimeToValue() * fraction));
+                // TIMELINE.setDuration((long) (getStdTimeToValue() * fraction));
                 timeline.setDuration(getStdTimeToValue());
                 timelineCallback = new TimelineCallback() {
 
                     @Override
-                    public void onTimelineStateChanged(final Timeline.TimelineState OLD_STATE,
-                                                       final Timeline.TimelineState NEW_STATE,
-                                                       final float OLD_VALUE, final float NEW_VALUE) {
+                    public void onTimelineStateChanged(
+                        final Timeline.TimelineState OLD_STATE, final Timeline.TimelineState NEW_STATE,
+                        final float OLD_VALUE, final float NEW_VALUE) {
                         if (NEW_STATE == Timeline.TimelineState.IDLE) {
                             repaint(getInnerBounds());
                         }
@@ -297,21 +312,23 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                 };
                 timeline.addCallback(timelineCallback);
                 timeline.play();
-            } else {
+            }
+            else {
                 final TimelineScenario AUTOZERO_SCENARIO = new TimelineScenario.Sequence();
 
                 final Timeline TIMELINE_TO_VALUE = new Timeline(this);
                 TIMELINE_TO_VALUE.addPropertyToInterpolate("value", getValue(), TARGET_VALUE);
                 TIMELINE_TO_VALUE.setEase(RETURN_TO_ZERO_EASING);
-                //TIMELINE_TO_VALUE.setDuration((long) (getRtzTimeToValue() * fraction));
+                // TIMELINE_TO_VALUE.setDuration((long) (getRtzTimeToValue() * fraction));
                 TIMELINE_TO_VALUE.setDuration(getRtzTimeToValue());
                 TIMELINE_TO_VALUE.addCallback(new TimelineCallback() {
 
                     @Override
-                    public void onTimelineStateChanged(Timeline.TimelineState oldState,
-                                                       Timeline.TimelineState newState,
-                                                       float oldValue, float newValue) {
-                        if (oldState == Timeline.TimelineState.PLAYING_FORWARD && newState == Timeline.TimelineState.DONE) {
+                    public void onTimelineStateChanged(
+                        Timeline.TimelineState oldState, Timeline.TimelineState newState, float oldValue,
+                        float newValue) {
+                        if (oldState == Timeline.TimelineState.PLAYING_FORWARD
+                            && newState == Timeline.TimelineState.DONE) {
                             // Set the peak value and start the timer
                             getModel().setPeakValue(getValue());
                             getModel().setPeakValueVisible(true);
@@ -344,19 +361,19 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                 final Timeline TIMELINE_TO_ZERO = new Timeline(this);
                 TIMELINE_TO_ZERO.addPropertyToInterpolate("value", TARGET_VALUE, 0.0);
                 TIMELINE_TO_ZERO.setEase(RETURN_TO_ZERO_EASING);
-                //TIMELINE_TO_ZERO.setDuration((long) (getRtzTimeBackToZero() * fraction));
+                // TIMELINE_TO_ZERO.setDuration((long) (getRtzTimeBackToZero() * fraction));
                 TIMELINE_TO_ZERO.setDuration(getRtzTimeBackToZero());
 
                 AUTOZERO_SCENARIO.addScenarioActor(TIMELINE_TO_VALUE);
                 AUTOZERO_SCENARIO.addScenarioActor(TIMELINE_TO_ZERO);
 
-//                AUTOZERO_SCENARIO.addCallback(new org.pushingpixels.trident.callback.TimelineScenarioCallback()
-//                {
-//                    @Override
-//                    public void onTimelineScenarioDone()
-//                    {
-//                    }
-//                });
+                // AUTOZERO_SCENARIO.addCallback(new org.pushingpixels.trident.callback.TimelineScenarioCallback()
+                // {
+                // @Override
+                // public void onTimelineScenarioDone()
+                // {
+                // }
+                // });
 
                 AUTOZERO_SCENARIO.play();
             }
@@ -365,6 +382,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the step between the tickmarks
+     * 
      * @return returns double value that represents the stepsize between the tickmarks
      */
     public double getAngleStep() {
@@ -373,6 +391,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the step between the tickmarks for log scaling
+     * 
      * @return returns double value that represents the stepsize between the tickmarks for log scaling
      */
     public double getLogAngleStep() {
@@ -381,6 +400,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the angle area where no tickmarks will be drawn
+     * 
      * @return the angle area where no tickmarks will be drawn
      */
     public double getFreeAreaAngle() {
@@ -417,6 +437,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the current position of the gauge threshold led
+     * 
      * @return the current position of the gauge threshold led
      */
     @Override
@@ -426,6 +447,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the position of the gauge threshold led to the given values
+     * 
      * @param X
      * @param Y
      */
@@ -437,6 +459,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the position of the gauge threshold led to the given values
+     * 
      * @param LED_POSITION
      */
     public void setLedPosition(final Point2D LED_POSITION) {
@@ -446,6 +469,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the current position of the gauge user led
+     * 
      * @return the current position of the gauge user led
      */
     @Override
@@ -455,6 +479,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the position of the gauge user led to the given values
+     * 
      * @param X
      * @param Y
      */
@@ -466,6 +491,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the position of the gauge threshold led to the given values
+     * 
      * @param USER_LED_POSITION
      */
     public void setUserLedPosition(final Point2D USER_LED_POSITION) {
@@ -474,9 +500,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the direction of the tickmark labels.
-     * CLOCKWISE is the standard and counts the labels like on a analog clock
-     * COUNTER_CLOCKWISE could be useful for gauges like Radial1Square in SOUTH_EAST orientation
+     * Returns the direction of the tickmark labels. CLOCKWISE is the standard and counts the labels like on a analog
+     * clock COUNTER_CLOCKWISE could be useful for gauges like Radial1Square in SOUTH_EAST orientation
+     * 
      * @return the direction of the tickmark counting
      */
     public Direction getTickmarkDirection() {
@@ -484,9 +510,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Sets the direction of the tickmark label counting.
-     * CLOCKWISE will count in clockwise direction
-     * COUNTER_CLOCKWISE will count the opposite way
+     * Sets the direction of the tickmark label counting. CLOCKWISE will count in clockwise direction COUNTER_CLOCKWISE
+     * will count the opposite way
+     * 
      * @param DIRECTION
      */
     public void setTickmarkDirection(final Direction DIRECTION) {
@@ -496,8 +522,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the type of the pointer
-     * FG_TYPE1 (standard version) or FG_TYPE2
+     * Returns the type of the pointer FG_TYPE1 (standard version) or FG_TYPE2
+     * 
      * @return the type of the pointer
      */
     public PointerType getPointerType() {
@@ -506,11 +532,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the type of the pointer
-     * @param POINTER_TYPE type of the pointer
-     *     PointerType.TYPE1 (default)
-     *     PointerType.TYPE2
-     *     PointerType.TYPE3
-     *     PointerType.TYPE4
+     * 
+     * @param POINTER_TYPE
+     *            type of the pointer PointerType.TYPE1 (default) PointerType.TYPE2 PointerType.TYPE3 PointerType.TYPE4
      */
     public void setPointerType(final PointerType POINTER_TYPE) {
         getModel().setPointerType(POINTER_TYPE);
@@ -520,6 +544,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the color of the pointer
+     * 
      * @return the selected color of the pointer
      */
     public ColorDef getPointerColor() {
@@ -528,6 +553,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the color of the pointer
+     * 
      * @param POINTER_COLOR
      */
     public void setPointerColor(final ColorDef POINTER_COLOR) {
@@ -538,6 +564,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the pointer shadow is visible
+     * 
      * @return true if the pointer shadow is visible
      */
     public boolean isPointerShadowVisible() {
@@ -546,6 +573,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables/disables the pointer shadow
+     * 
      * @param POINTER_SHADOW_VISIBLE
      */
     public void setPointerShadowVisible(final boolean POINTER_SHADOW_VISIBLE) {
@@ -556,6 +584,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the color from which the custom pointer color will be calculated
+     * 
      * @return the color from which the custom pointer color will be calculated
      */
     public Color getCustomPointerColor() {
@@ -564,6 +593,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the color from which the custom pointer color is calculated
+     * 
      * @param COLOR
      */
     public void setCustomPointerColor(final Color COLOR) {
@@ -574,6 +604,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the object that represents the custom pointer color
+     * 
      * @return the object that represents the custom pointer color
      */
     public CustomColorDef getCustomPointerColorObject() {
@@ -582,6 +613,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the type of the knob
+     * 
      * @return the type of the knob
      */
     public KnobType getKnobType() {
@@ -590,6 +622,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the type of the knob
+     * 
      * @param KNOB_TYPE
      */
     public void setKnobType(final KnobType KNOB_TYPE) {
@@ -600,6 +633,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the style of the center knob of a radial gauge
+     * 
      * @return the style of the center knob of a radial gauge
      */
     public KnobStyle getKnobStyle() {
@@ -608,6 +642,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the the style of the center knob of a radial gauge
+     * 
      * @param KNOB_STYLE
      */
     public void setKnobStyle(final KnobStyle KNOB_STYLE) {
@@ -618,6 +653,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the visibility of the lcd display
+     * 
      * @return true if the lcd display is visible
      */
     public boolean isLcdVisible() {
@@ -626,6 +662,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables or disables the visibility of the lcd display
+     * 
      * @param LCD_VISIBLE
      */
     public void setLcdVisible(final boolean LCD_VISIBLE) {
@@ -636,6 +673,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the lcd text is visible which is needed for lcd blinking
+     * 
      * @return true if the lcd text is visible which is needed for lcd blinking
      */
     public boolean isLcdTextVisible() {
@@ -644,6 +682,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the arc that represents the range of measured values is visible
+     * 
      * @return true if the arc that represents the range of measured values is visible
      */
     public boolean isRangeOfMeasuredValuesVisible() {
@@ -652,6 +691,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables / disables the visibility of the arc that represents the range of measured values
+     * 
      * @param RANGE_OF_MEASURED_VALUES_VISIBLE
      */
     public void setRangeOfMeasuredValuesVisible(final boolean RANGE_OF_MEASURED_VALUES_VISIBLE) {
@@ -686,10 +726,12 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
         if (!isLogScale()) {
             lcdValue = LCD_VALUE;
-        } else {
+        }
+        else {
             if (LCD_VALUE > 1) {
                 lcdValue = LCD_VALUE;
-            } else {
+            }
+            else {
                 lcdValue = 1;
             }
         }
@@ -699,7 +741,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     @Override
     public void setLcdValueAnimated(final double LCD_VALUE) {
-        if (lcdTimeline.getState() == Timeline.TimelineState.PLAYING_FORWARD || lcdTimeline.getState() == Timeline.TimelineState.PLAYING_REVERSE) {
+        if (lcdTimeline.getState() == Timeline.TimelineState.PLAYING_FORWARD
+            || lcdTimeline.getState() == Timeline.TimelineState.PLAYING_REVERSE) {
             lcdTimeline.abort();
         }
         lcdTimeline = new Timeline(this);
@@ -753,7 +796,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     public void setLcdBlinking(final boolean LCD_BLINKING) {
         if (LCD_BLINKING) {
             LCD_BLINKING_TIMER.start();
-        } else {
+        }
+        else {
             LCD_BLINKING_TIMER.stop();
             lcdTextVisible = true;
         }
@@ -901,7 +945,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         }
 
         DEC_BUFFER.trimToSize();
-        final java.text.DecimalFormat DEC_FORMAT = new java.text.DecimalFormat(DEC_BUFFER.toString(), new java.text.DecimalFormatSymbols(java.util.Locale.US));
+        final java.text.DecimalFormat DEC_FORMAT =
+            new java.text.DecimalFormat(DEC_BUFFER.toString(), new java.text.DecimalFormatSymbols(java.util.Locale.US));
 
         return DEC_FORMAT.format(VALUE);
     }
@@ -984,32 +1029,35 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         }
         repaint(getInnerBounds());
     }
-/*
-    @Override
-    public abstract Rectangle getLcdBounds();
-*/
+
+    /*
+     * @Override public abstract Rectangle getLcdBounds();
+     */
     @Override
     public void toggleDesign() {
         if (getActiveDesign().equals(getDesign1())) {
             setActiveDesign(getDesign2());
-        } else {
+        }
+        else {
             setActiveDesign(getDesign1());
         }
     }
 
     /**
-    * Returns true if the glow indicator is visible
-    * @return true if the glow indicator is visible
-    */
+     * Returns true if the glow indicator is visible
+     * 
+     * @return true if the glow indicator is visible
+     */
     @Override
     public boolean isGlowVisible() {
         return getModel().isGlowVisible();
     }
 
     /**
-    * Enables / disables the glow indicator
-    * @param GLOW_VISIBLE
-    */
+     * Enables / disables the glow indicator
+     * 
+     * @param GLOW_VISIBLE
+     */
     public void setGlowVisible(final boolean GLOW_VISIBLE) {
         getModel().setGlowVisible(GLOW_VISIBLE);
         init(getInnerBounds().width, getInnerBounds().height);
@@ -1017,17 +1065,19 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-    * Returns the color that will be used for the glow indicator
-    * @return the color that will be used for the glow indicator
-    */
-    public  Color getGlowColor() {
+     * Returns the color that will be used for the glow indicator
+     * 
+     * @return the color that will be used for the glow indicator
+     */
+    public Color getGlowColor() {
         return getModel().getGlowColor();
     }
 
     /**
-    * Sets the color that will be used for the glow indicator
-    * @param GLOW_COLOR
-    */
+     * Sets the color that will be used for the glow indicator
+     * 
+     * @param GLOW_COLOR
+     */
     public void setGlowColor(final Color GLOW_COLOR) {
         getModel().setGlowColor(GLOW_COLOR);
         init(getInnerBounds().width, getInnerBounds().height);
@@ -1035,17 +1085,19 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-    * Returns true if the glow indicator is glowing
-    * @return true if the glow indicator is glowing
-    */
+     * Returns true if the glow indicator is glowing
+     * 
+     * @return true if the glow indicator is glowing
+     */
     public boolean isGlowing() {
         return getModel().isGlowing();
     }
 
     /**
-    * Enables / disables the glowing of the glow indicator
-    * @param GLOWING
-    */
+     * Enables / disables the glowing of the glow indicator
+     * 
+     * @param GLOWING
+     */
     public void setGlowing(final boolean GLOWING) {
         getModel().setGlowing(GLOWING);
         repaint(getInnerBounds());
@@ -1053,6 +1105,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the color of the small outer frame of the gauge
+     * 
      * @return the color of the small outer frame of the gauge
      */
     public Paint getOuterFrameColor() {
@@ -1061,6 +1114,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the color of the small outer frame of the gauge
+     * 
      * @param OUTER_FRAME_COLOR
      */
     public void setOuterFrameColor(final Paint OUTER_FRAME_COLOR) {
@@ -1071,6 +1125,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the color of the small inner frame of the gauge
+     * 
      * @return the color of the small inner frame of the gauge
      */
     public Paint getInnerFrameColor() {
@@ -1079,6 +1134,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the color of the small inner frame of the gauge
+     * 
      * @param INNER_FRAME_COLOR
      */
     public void setInnerFrameColor(final Paint INNER_FRAME_COLOR) {
@@ -1089,6 +1145,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the posts of the radial gauges are visible
+     * 
      * @return true if the posts of the radial gauges are visible
      */
     public boolean getPostsVisible() {
@@ -1097,6 +1154,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables/disables the visibility of the posts of the radial gauges
+     * 
      * @param POSTS_VISIBLE
      */
     public void setPostsVisible(final boolean POSTS_VISIBLE) {
@@ -1107,6 +1165,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the orientation of the tickmark labels
+     * 
      * @return the orientation of the tickmark labels
      */
     public TicklabelOrientation getTicklabelOrientation() {
@@ -1115,6 +1174,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the orientation of the tickmark labels
+     * 
      * @param TICKLABEL_ORIENTATION
      */
     public void setTicklabelOrientation(final TicklabelOrientation TICKLABEL_ORIENTATION) {
@@ -1125,6 +1185,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the sections will be filled with a transparent color
+     * 
      * @return true if the sections will be filled with a transparent color
      */
     public boolean isTransparentSectionsEnabled() {
@@ -1133,6 +1194,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables / disables the usage of a transparent color for filling sections
+     * 
      * @param TRANSPARENT_SECTIONS_ENABLED
      */
     public void setTransparentSectionsEnabled(final boolean TRANSPARENT_SECTIONS_ENABLED) {
@@ -1141,8 +1203,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         repaint(getInnerBounds());
     }
 
-     /**
+    /**
      * Returns true if the areas will be filled with a transparent color
+     * 
      * @return true if the areas will be filled with a transparent color
      */
     public boolean isTransparentAreasEnabled() {
@@ -1151,6 +1214,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables / disables the usage of a transparent color for filling areas
+     * 
      * @param TRANSPARENT_AREAS_ENABLED
      */
     public void setTransparentAreasEnabled(final boolean TRANSPARENT_AREAS_ENABLED) {
@@ -1161,6 +1225,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns true if the sections are wider
+     * 
      * @return true if the sections are wider
      */
     public boolean isExpandedSectionsEnabled() {
@@ -1169,6 +1234,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Enables / disables the use of wider sections
+     * 
      * @param EXPANDED_SECTIONS_ENABLED
      */
     public void setExpandedSectionsEnabled(final boolean EXPANDED_SECTIONS_ENABLED) {
@@ -1180,48 +1246,32 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     // <editor-fold defaultstate="collapsed" desc="Image related">
     /**
-     * Returns a radial gradient paint that will be used as overlay for the track or section image
-     * to achieve some kind of a 3d effect.
+     * Returns a radial gradient paint that will be used as overlay for the track or section image to achieve some kind
+     * of a 3d effect.
+     * 
      * @param WIDTH
-     * @param RADIUS_FACTOR : 0.38f for the standard radial gauge
+     * @param RADIUS_FACTOR
+     *            : 0.38f for the standard radial gauge
      * @return a radial gradient paint that will be used as overlay for the track or section image
      */
     protected RadialGradientPaint createSection3DEffectGradient(final int WIDTH, final float RADIUS_FACTOR) {
         final float[] FRACTIONS;
         final Color[] COLORS;
         if (isExpandedSectionsEnabled()) {
-           FRACTIONS = new float[]{
-                0.0f,
-                0.7f,
-                0.75f,
-                0.96f,
-                1.0f
-            };
+            FRACTIONS = new float[] { 0.0f, 0.7f, 0.75f, 0.96f, 1.0f };
 
-            COLORS = new Color[]{
-                new Color(0.0f, 0.0f, 0.0f, 1.0f),
-                new Color(0.9f, 0.9f, 0.9f, 0.2f),
-                new Color(1.0f, 1.0f, 1.0f, 0.5f),
-                new Color(0.1843137255f, 0.1843137255f, 0.1843137255f, 0.3f),
-                new Color(0.0f, 0.0f, 0.0f, 0.2f)
-            };
-        } else {
-           FRACTIONS = new float[]{
-                0.0f,
-                0.89f,
-                0.955f,
-                1.0f
-            };
-
-            COLORS = new Color[]{
-                new Color(0.0f, 0.0f, 0.0f, 0.0f),
-                new Color(0.0f, 0.0f, 0.0f, 0.3f),
-                new Color(1.0f, 1.0f, 1.0f, 0.6f),
-                new Color(0.0f, 0.0f, 0.0f, 0.4f)
-            };
+            COLORS =
+                new Color[] { new Color(0.0f, 0.0f, 0.0f, 1.0f), new Color(0.9f, 0.9f, 0.9f, 0.2f),
+                    new Color(1.0f, 1.0f, 1.0f, 0.5f), new Color(0.1843137255f, 0.1843137255f, 0.1843137255f, 0.3f),
+                    new Color(0.0f, 0.0f, 0.0f, 0.2f) };
         }
+        else {
+            FRACTIONS = new float[] { 0.0f, 0.89f, 0.955f, 1.0f };
 
-
+            COLORS =
+                new Color[] { new Color(0.0f, 0.0f, 0.0f, 0.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f),
+                    new Color(1.0f, 1.0f, 1.0f, 0.6f), new Color(0.0f, 0.0f, 0.0f, 0.4f) };
+        }
 
         final Point2D GRADIENT_CENTER = new Point2D.Double(WIDTH / 2.0, WIDTH / 2.0);
 
@@ -1229,8 +1279,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns a radial gradient paint that will be used as overlay for the track or area image
-     * to achieve some kind of a 3d effect.
+     * Returns a radial gradient paint that will be used as overlay for the track or area image to achieve some kind of
+     * a 3d effect.
+     * 
      * @param WIDTH
      * @param RADIUS_FACTOR
      * @return a radial gradient paint that will be used as overlay for the track or area image
@@ -1239,41 +1290,42 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         final float[] FRACTIONS;
         final Color[] COLORS;
 
-        FRACTIONS = new float[]{
-            0.0f,
-            0.6f,
-            1.0f
-        };
-        COLORS = new Color[]{
-            new Color(1.0f, 1.0f, 1.0f, 0.75f),
-            new Color(1.0f, 1.0f, 1.0f, 0.0f),
-            new Color(0.0f, 0.0f, 0.0f, 0.3f)
-        };
+        FRACTIONS = new float[] { 0.0f, 0.6f, 1.0f };
+        COLORS =
+            new Color[] { new Color(1.0f, 1.0f, 1.0f, 0.75f), new Color(1.0f, 1.0f, 1.0f, 0.0f),
+                new Color(0.0f, 0.0f, 0.0f, 0.3f) };
         final Point2D GRADIENT_CENTER = new Point2D.Double(WIDTH / 2.0, WIDTH / 2.0);
 
         return new RadialGradientPaint(GRADIENT_CENTER, WIDTH * RADIUS_FACTOR, FRACTIONS, COLORS);
     }
 
     /**
-     * Returns the frame image with the currently active framedesign
-     * with the given width and the current frame type.
+     * Returns the frame image with the currently active framedesign with the given width and the current frame type.
+     * 
      * @param WIDTH
      * @return buffered image containing the frame in the active frame design
      */
     protected BufferedImage create_FRAME_Image(final int WIDTH) {
         switch (getFrameType()) {
             case ROUND:
-                return FRAME_FACTORY.createRadialFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(), isFrameBaseColorEnabled(), getFrameEffect());
+                return FRAME_FACTORY
+                    .createRadialFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(),
+                        isFrameBaseColorEnabled(), getFrameEffect());
             case SQUARE:
-                return FRAME_FACTORY.createLinearFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(), isFrameBaseColorEnabled(), getFrameEffect());
+                return FRAME_FACTORY
+                    .createLinearFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(),
+                        isFrameBaseColorEnabled(), getFrameEffect());
             default:
-                return FRAME_FACTORY.createRadialFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(), isFrameBaseColorEnabled(), getFrameEffect());
+                return FRAME_FACTORY
+                    .createRadialFrame(WIDTH, getFrameDesign(), getCustomFrameDesign(), getFrameBaseColor(),
+                        isFrameBaseColorEnabled(), getFrameEffect());
         }
     }
 
     /**
-     * Returns the background image with the currently active backgroundcolor
-     * with the given width without a title and a unit string.
+     * Returns the background image with the currently active backgroundcolor with the given width without a title and a
+     * unit string.
+     * 
      * @param WIDTH
      * @return the background image that is used
      */
@@ -1282,8 +1334,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the background image with the currently active backgroundcolor
-     * with the given width, title and unitstring.
+     * Returns the background image with the currently active backgroundcolor with the given width, title and
+     * unitstring.
+     * 
      * @param WIDTH
      * @param TITLE
      * @param UNIT_STRING
@@ -1294,15 +1347,17 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns the background image with the currently active backgroundcolor
-     * with the given width, title and unitstring.
+     * Returns the background image with the currently active backgroundcolor with the given width, title and
+     * unitstring.
+     * 
      * @param WIDTH
      * @param TITLE
      * @param UNIT_STRING
      * @param image
      * @return buffered image containing the background with the selected background design
      */
-    protected BufferedImage create_BACKGROUND_Image(final int WIDTH, final String TITLE, final String UNIT_STRING, BufferedImage image) {
+    protected BufferedImage create_BACKGROUND_Image(
+        final int WIDTH, final String TITLE, final String UNIT_STRING, BufferedImage image) {
         if (WIDTH <= 0) {
             return null;
         }
@@ -1319,18 +1374,26 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
         switch (getFrameType()) {
             case SQUARE:
-                BACKGROUND_FACTORY.createLinearBackground(WIDTH, WIDTH, getBackgroundColor(), getModel().getCustomBackground(), getModel().getTextureColor(), image);
+                BACKGROUND_FACTORY
+                    .createLinearBackground(WIDTH, WIDTH, getBackgroundColor(), getModel().getCustomBackground(),
+                        getModel().getTextureColor(), image);
                 break;
             case ROUND:
 
             default:
-                BACKGROUND_FACTORY.createRadialBackground(WIDTH, getBackgroundColor(), getModel().getCustomBackground(), getModel().getTextureColor(), image);
+                BACKGROUND_FACTORY
+                    .createRadialBackground(WIDTH, getBackgroundColor(), getModel().getCustomBackground(),
+                        getModel().getTextureColor(), image);
                 break;
         }
 
         // Draw the custom layer if selected
         if (isCustomLayerVisible()) {
-            G2.drawImage(UTIL.getScaledInstance(getCustomLayer(), IMAGE_WIDTH, IMAGE_HEIGHT, RenderingHints.VALUE_INTERPOLATION_BICUBIC), 0, 0, null);
+            G2
+                .drawImage(UTIL
+                    .getScaledInstance(getCustomLayer(), IMAGE_WIDTH, IMAGE_HEIGHT,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC),
+                    0, 0, null);
         }
 
         final FontRenderContext RENDER_CONTEXT = new FontRenderContext(null, true, true);
@@ -1339,38 +1402,46 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
             // Use custom label color if selected
             if (isLabelColorFromThemeEnabled()) {
                 G2.setColor(getModel().getBackgroundColor().LABEL_COLOR);
-            } else {
+            }
+            else {
                 G2.setColor(getModel().getLabelColor());
             }
 
             // Use custom font if selected
             if (isTitleAndUnitFontEnabled()) {
                 G2.setFont(new Font(getTitleAndUnitFont().getFamily(), 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
-            } else {
+            }
+            else {
                 G2.setFont(new Font("Verdana", 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
             }
             final TextLayout TITLE_LAYOUT = new TextLayout(TITLE, G2.getFont(), RENDER_CONTEXT);
             final Rectangle2D TITLE_BOUNDARY = TITLE_LAYOUT.getBounds();
-            G2.drawString(TITLE, (float) ((IMAGE_WIDTH - TITLE_BOUNDARY.getWidth()) / 2.0), 0.3f * IMAGE_HEIGHT + TITLE_LAYOUT.getAscent() - TITLE_LAYOUT.getDescent());
+            G2
+                .drawString(TITLE, (float) ((IMAGE_WIDTH - TITLE_BOUNDARY.getWidth()) / 2.0),
+                    0.3f * IMAGE_HEIGHT + TITLE_LAYOUT.getAscent() - TITLE_LAYOUT.getDescent());
         }
 
         if (!UNIT_STRING.isEmpty()) {
             // Use custom label color if selected
             if (isLabelColorFromThemeEnabled()) {
                 G2.setColor(getModel().getBackgroundColor().LABEL_COLOR);
-            } else {
+            }
+            else {
                 G2.setColor(getModel().getLabelColor());
             }
 
             // Use custom font if selected
             if (isTitleAndUnitFontEnabled()) {
                 G2.setFont(new Font(getTitleAndUnitFont().getFamily(), 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
-            } else {
+            }
+            else {
                 G2.setFont(new Font("Verdana", 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
             }
             final TextLayout UNIT_LAYOUT = new TextLayout(UNIT_STRING, G2.getFont(), RENDER_CONTEXT);
             final Rectangle2D UNIT_BOUNDARY = UNIT_LAYOUT.getBounds();
-            G2.drawString(UNIT_STRING, (float) ((IMAGE_WIDTH - UNIT_BOUNDARY.getWidth()) / 2.0), 0.38f * IMAGE_HEIGHT + UNIT_LAYOUT.getAscent() - UNIT_LAYOUT.getDescent());
+            G2
+                .drawString(UNIT_STRING, (float) ((IMAGE_WIDTH - UNIT_BOUNDARY.getWidth()) / 2.0),
+                    0.38f * IMAGE_HEIGHT + UNIT_LAYOUT.getAscent() - UNIT_LAYOUT.getDescent());
         }
 
         G2.dispose();
@@ -1379,9 +1450,10 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     }
 
     /**
-     * Returns an image that simulates a glowing ring which could be used to visualize
-     * a state of the gauge by a color. The LED might be too small if you are not in front
-     * of the screen and so one could see the current state more easy.
+     * Returns an image that simulates a glowing ring which could be used to visualize a state of the gauge by a color.
+     * The LED might be too small if you are not in front of the screen and so one could see the current state more
+     * easy.
+     * 
      * @param WIDTH
      * @param GLOW_COLOR
      * @param ON
@@ -1390,7 +1462,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
      * @param ORIENTATION
      * @return an image that simulates a glowing ring
      */
-    protected BufferedImage create_GLOW_Image(final int WIDTH, final Color GLOW_COLOR, final boolean ON, final GaugeType GAUGE_TYPE, final boolean KNOBS, final Orientation ORIENTATION) {
+    protected BufferedImage create_GLOW_Image(
+        final int WIDTH, final Color GLOW_COLOR, final boolean ON, final GaugeType GAUGE_TYPE, final boolean KNOBS,
+        final Orientation ORIENTATION) {
         switch (getFrameType()) {
             case ROUND:
                 return GLOW_FACTORY.createRadialGlow(WIDTH, GLOW_COLOR, ON, GAUGE_TYPE, KNOBS, ORIENTATION);
@@ -1403,6 +1477,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image with the given title and unitstring.
+     * 
      * @param WIDTH
      * @param TITLE
      * @param UNIT_STRING
@@ -1414,13 +1489,15 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image with the given title and unitstring.
+     * 
      * @param WIDTH
      * @param TITLE
      * @param UNIT_STRING
      * @param image
      * @return the image with the given title and unitstring.
      */
-    protected BufferedImage create_TITLE_Image(final int WIDTH, final String TITLE, final String UNIT_STRING, BufferedImage image) {
+    protected BufferedImage create_TITLE_Image(
+        final int WIDTH, final String TITLE, final String UNIT_STRING, BufferedImage image) {
         if (WIDTH <= 0) {
             return UTIL.createImage(1, 1, Transparency.TRANSLUCENT);
         }
@@ -1441,38 +1518,50 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
             // Use custom label color if selected
             if (isLabelColorFromThemeEnabled()) {
                 G2.setColor(getBackgroundColor().LABEL_COLOR);
-            } else {
+            }
+            else {
                 G2.setColor(getLabelColor());
             }
 
             // Use custom font if selected
             if (isTitleAndUnitFontEnabled()) {
-                G2.setFont(new Font(getTitleAndUnitFont().getFamily(), getTitleAndUnitFont().getStyle(), getTitleAndUnitFont().getSize()));
-            } else {
+                G2
+                    .setFont(new Font(getTitleAndUnitFont().getFamily(), getTitleAndUnitFont().getStyle(),
+                        getTitleAndUnitFont().getSize()));
+            }
+            else {
                 G2.setFont(new Font("Verdana", 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
             }
             final TextLayout TITLE_LAYOUT = new TextLayout(TITLE, G2.getFont(), RENDER_CONTEXT);
             final Rectangle2D TITLE_BOUNDARY = TITLE_LAYOUT.getBounds();
-            G2.drawString(TITLE, (float) ((IMAGE_WIDTH - TITLE_BOUNDARY.getWidth()) / 2.0), 0.3f * IMAGE_HEIGHT + TITLE_LAYOUT.getAscent() - TITLE_LAYOUT.getDescent());
+            G2
+                .drawString(TITLE, (float) ((IMAGE_WIDTH - TITLE_BOUNDARY.getWidth()) / 2.0),
+                    0.3f * IMAGE_HEIGHT + TITLE_LAYOUT.getAscent() - TITLE_LAYOUT.getDescent());
         }
 
         if (!UNIT_STRING.isEmpty()) {
             // Use custom label color if selected
             if (isLabelColorFromThemeEnabled()) {
                 G2.setColor(getBackgroundColor().LABEL_COLOR);
-            } else {
+            }
+            else {
                 G2.setColor(getLabelColor());
             }
 
             // Use custom font if selected
             if (isTitleAndUnitFontEnabled()) {
-                G2.setFont(new Font(getTitleAndUnitFont().getFamily(), getTitleAndUnitFont().getStyle(), getTitleAndUnitFont().getSize()));
-            } else {
+                G2
+                    .setFont(new Font(getTitleAndUnitFont().getFamily(), getTitleAndUnitFont().getStyle(),
+                        getTitleAndUnitFont().getSize()));
+            }
+            else {
                 G2.setFont(new Font("Verdana", 0, (int) (0.04672897196261682 * IMAGE_WIDTH)));
             }
             final TextLayout UNIT_LAYOUT = new TextLayout(UNIT_STRING, G2.getFont(), RENDER_CONTEXT);
             final Rectangle2D UNIT_BOUNDARY = UNIT_LAYOUT.getBounds();
-            G2.drawString(UNIT_STRING, (float) ((IMAGE_WIDTH - UNIT_BOUNDARY.getWidth()) / 2.0), 0.37f * IMAGE_HEIGHT + UNIT_LAYOUT.getAscent() - UNIT_LAYOUT.getDescent());
+            G2
+                .drawString(UNIT_STRING, (float) ((IMAGE_WIDTH - UNIT_BOUNDARY.getWidth()) / 2.0),
+                    0.37f * IMAGE_HEIGHT + UNIT_LAYOUT.getAscent() - UNIT_LAYOUT.getDescent());
         }
 
         G2.dispose();
@@ -1482,32 +1571,37 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image with the given lcd color.
+     * 
      * @param WIDTH
      * @param HEIGHT
      * @param LCD_COLOR
      * @param CUSTOM_LCD_BACKGROUND
      * @return buffered image containing the lcd with the selected lcd color
      */
-    protected BufferedImage create_LCD_Image(final int WIDTH, final int HEIGHT, final LcdColor LCD_COLOR, final Paint CUSTOM_LCD_BACKGROUND) {
+    protected BufferedImage create_LCD_Image(
+        final int WIDTH, final int HEIGHT, final LcdColor LCD_COLOR, final Paint CUSTOM_LCD_BACKGROUND) {
         return createLcdImage(new Rectangle2D.Double(0, 0, WIDTH, HEIGHT), LCD_COLOR, CUSTOM_LCD_BACKGROUND, null);
     }
 
     /**
      * Returns the image with the given lcd color.
+     * 
      * @param BOUNDS
      * @param LCD_COLOR
      * @param CUSTOM_LCD_BACKGROUND
      * @param IMAGE
      * @return buffered image containing the lcd with the selected lcd color
      */
-    protected BufferedImage createLcdImage(final Rectangle2D BOUNDS, final LcdColor LCD_COLOR, final Paint CUSTOM_LCD_BACKGROUND, final BufferedImage IMAGE) {
+    protected BufferedImage createLcdImage(
+        final Rectangle2D BOUNDS, final LcdColor LCD_COLOR, final Paint CUSTOM_LCD_BACKGROUND,
+        final BufferedImage IMAGE) {
         return LCD_FACTORY.create_LCD_Image(BOUNDS, LCD_COLOR, CUSTOM_LCD_BACKGROUND, IMAGE);
     }
 
     /**
-     * Returns the track image with a given values. The gradient will be created by drawing
-     * a series of lines and varies the color of the lines. The linewidth will be calculated
-     * from the size of the component and from the gaugeType.
+     * Returns the track image with a given values. The gradient will be created by drawing a series of lines and varies
+     * the color of the lines. The linewidth will be calculated from the size of the component and from the gaugeType.
+     * 
      * @param WIDTH
      * @param FREE_AREA_ANGLE
      * @param ROTATION_OFFSET
@@ -1526,25 +1620,21 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
      * @param OFFSET
      * @return a buffered image that represents the image of the track
      */
-    protected BufferedImage create_TRACK_Image(final int WIDTH, final double FREE_AREA_ANGLE,
-                                                              final double ROTATION_OFFSET, final double MIN_VALUE,
-                                                              final double MAX_VALUE, final double ANGLE_STEP,
-                                                              final double TRACK_START, final double TRACK_SECTION,
-                                                              final double TRACK_STOP,
-                                                              final Color TRACK_START_COLOR,
-                                                              final Color TRACK_SECTION_COLOR,
-                                                              final Color TRACK_STOP_COLOR,
-                                                              final float RADIUS_FACTOR,
-                                                              final Point2D CENTER,
-                                                              final Direction DIRECTION,
-                                                              final Point2D OFFSET) {
-        return create_TRACK_Image(WIDTH, FREE_AREA_ANGLE, ROTATION_OFFSET, MIN_VALUE, MAX_VALUE, ANGLE_STEP, TRACK_START, TRACK_SECTION, TRACK_STOP, TRACK_START_COLOR, TRACK_SECTION_COLOR, TRACK_STOP_COLOR, RADIUS_FACTOR, CENTER, DIRECTION, OFFSET, null);
+    protected BufferedImage create_TRACK_Image(
+        final int WIDTH, final double FREE_AREA_ANGLE, final double ROTATION_OFFSET, final double MIN_VALUE,
+        final double MAX_VALUE, final double ANGLE_STEP, final double TRACK_START, final double TRACK_SECTION,
+        final double TRACK_STOP, final Color TRACK_START_COLOR, final Color TRACK_SECTION_COLOR,
+        final Color TRACK_STOP_COLOR, final float RADIUS_FACTOR, final Point2D CENTER, final Direction DIRECTION,
+        final Point2D OFFSET) {
+        return create_TRACK_Image(WIDTH, FREE_AREA_ANGLE, ROTATION_OFFSET, MIN_VALUE, MAX_VALUE, ANGLE_STEP,
+            TRACK_START, TRACK_SECTION, TRACK_STOP, TRACK_START_COLOR, TRACK_SECTION_COLOR, TRACK_STOP_COLOR,
+            RADIUS_FACTOR, CENTER, DIRECTION, OFFSET, null);
     }
 
     /**
-     * Returns the track image with a given values. The gradient will be created by drawing
-     * a series of lines and varies the color of the lines. The linewidth will be calculated
-     * from the size of the component and from the gaugeType.
+     * Returns the track image with a given values. The gradient will be created by drawing a series of lines and varies
+     * the color of the lines. The linewidth will be calculated from the size of the component and from the gaugeType.
+     * 
      * @param WIDTH
      * @param FREE_AREA_ANGLE
      * @param ROTATION_OFFSET
@@ -1564,19 +1654,12 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
      * @param image
      * @return a buffered image that represents the image of the track
      */
-    protected BufferedImage create_TRACK_Image(final int WIDTH, final double FREE_AREA_ANGLE,
-                                                              final double ROTATION_OFFSET, final double MIN_VALUE,
-                                                              final double MAX_VALUE, final double ANGLE_STEP,
-                                                              final double TRACK_START, final double TRACK_SECTION,
-                                                              final double TRACK_STOP,
-                                                              final Color TRACK_START_COLOR,
-                                                              final Color TRACK_SECTION_COLOR,
-                                                              final Color TRACK_STOP_COLOR,
-                                                              final float RADIUS_FACTOR,
-                                                              final Point2D CENTER,
-                                                              final Direction DIRECTION,
-                                                              final Point2D OFFSET,
-                                                              BufferedImage image) {
+    protected BufferedImage create_TRACK_Image(
+        final int WIDTH, final double FREE_AREA_ANGLE, final double ROTATION_OFFSET, final double MIN_VALUE,
+        final double MAX_VALUE, final double ANGLE_STEP, final double TRACK_START, final double TRACK_SECTION,
+        final double TRACK_STOP, final Color TRACK_START_COLOR, final Color TRACK_SECTION_COLOR,
+        final Color TRACK_STOP_COLOR, final float RADIUS_FACTOR, final Point2D CENTER, final Direction DIRECTION,
+        final Point2D OFFSET, BufferedImage image) {
         if (WIDTH <= 0) {
             return UTIL.createImage(1, 1, Transparency.TRANSLUCENT);
         }
@@ -1588,7 +1671,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         final int IMAGE_WIDTH = image.getWidth();
-        //final int IMAGE_HEIGHT = IMAGE.getHeight();
+        // final int IMAGE_HEIGHT = IMAGE.getHeight();
 
         if (OFFSET != null) {
             G2.translate(OFFSET.getX(), OFFSET.getY());
@@ -1608,11 +1691,10 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
             case TYPE3:
                 lineWidth = (float) Math.toDegrees(1.5 * Math.PI - FREE_AREA_ANGLE) * 0.00167f * WIDTH * 0.0067f;
                 break;
-/*
-            case TYPE4:
-                lineWidth = (float) Math.toDegrees(2.0 * Math.PI - FREE_AREA_ANGLE) * 0.00167f * WIDTH * 0.0067f;
-                break;
-*/
+            /*
+             * case TYPE4: lineWidth = (float) Math.toDegrees(2.0 * Math.PI - FREE_AREA_ANGLE) * 0.00167f * WIDTH *
+             * 0.0067f; break;
+             */
             default:
                 lineWidth = (float) Math.toDegrees(2.0 * Math.PI - FREE_AREA_ANGLE) * 0.00167f * WIDTH * 0.0067f;
                 break;
@@ -1666,7 +1748,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                 TRACK_STOP_ANGLE = (TRACK_STOP * ANGLE_STEP);
 
                 ALPHA_START = -ROTATION_OFFSET - (FREE_AREA_ANGLE / 2.0) - TRACK_START_ANGLE + (MIN_VALUE * ANGLE_STEP);
-                ALPHA_SECTION = -ROTATION_OFFSET - (FREE_AREA_ANGLE / 2.0) - TRACK_SECTION_ANGLE + (MIN_VALUE * ANGLE_STEP);
+                ALPHA_SECTION =
+                    -ROTATION_OFFSET - (FREE_AREA_ANGLE / 2.0) - TRACK_SECTION_ANGLE + (MIN_VALUE * ANGLE_STEP);
                 ALPHA_STOP = -ROTATION_OFFSET - (FREE_AREA_ANGLE / 2.0) - TRACK_STOP_ANGLE + (MIN_VALUE * ANGLE_STEP);
                 currentColor = TRACK_START_COLOR;
                 break;
@@ -1679,21 +1762,30 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         G2.setStroke(STD_STROKE);
         float fraction = 0;
         // Draw track from TRACK_START to TRACK_SECTION
-        for (double alpha = ALPHA_START; Double.compare(alpha, ALPHA_SECTION) >= 0; alpha -= (ANGLE_STEP / RANGE_FACTOR), fraction += FRACTION_STEP) {
+        for (double alpha = ALPHA_START; Double.compare(alpha, ALPHA_SECTION) >= 0; alpha -=
+            (ANGLE_STEP / RANGE_FACTOR), fraction += FRACTION_STEP) {
             sinValue = Math.sin(alpha);
             cosValue = Math.cos(alpha);
             switch (DIRECTION) {
                 case CLOCKWISE:
-                    currentColor = UTIL.getColorFromFraction(TRACK_START_COLOR, TRACK_SECTION_COLOR, (int) (TRACK_SECTION - TRACK_START), (int) (fraction));
+                    currentColor =
+                        UTIL
+                            .getColorFromFraction(TRACK_START_COLOR, TRACK_SECTION_COLOR,
+                                (int) (TRACK_SECTION - TRACK_START), (int) (fraction));
                     break;
 
                 case COUNTER_CLOCKWISE:
-                    currentColor = UTIL.getColorFromFraction(TRACK_STOP_COLOR, TRACK_SECTION_COLOR, (int) (TRACK_STOP - TRACK_SECTION), (int) (fraction));
+                    currentColor =
+                        UTIL
+                            .getColorFromFraction(TRACK_STOP_COLOR, TRACK_SECTION_COLOR,
+                                (int) (TRACK_STOP - TRACK_SECTION), (int) (fraction));
                     break;
             }
 
             G2.setColor(currentColor);
-            INNER_POINT.setLocation(CENTER.getX() + (RADIUS - TRACK_WIDTH) * sinValue, CENTER.getY() + (RADIUS - TRACK_WIDTH) * cosValue);
+            INNER_POINT
+                .setLocation(CENTER.getX() + (RADIUS - TRACK_WIDTH) * sinValue,
+                    CENTER.getY() + (RADIUS - TRACK_WIDTH) * cosValue);
             OUTER_POINT.setLocation(CENTER.getX() + RADIUS * sinValue, CENTER.getY() + RADIUS * cosValue);
 
             TICK.setLine(INNER_POINT, OUTER_POINT);
@@ -1703,20 +1795,29 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
         // Draw track from TRACK_SECTION to TRACK_STOP
         fraction = 0;
-        for (double alpha = ALPHA_SECTION; Double.compare(alpha, ALPHA_STOP) >= 0; alpha -= (ANGLE_STEP / RANGE_FACTOR), fraction += FRACTION_STEP) {
+        for (double alpha = ALPHA_SECTION; Double.compare(alpha, ALPHA_STOP) >= 0; alpha -=
+            (ANGLE_STEP / RANGE_FACTOR), fraction += FRACTION_STEP) {
             sinValue = Math.sin(alpha);
             cosValue = Math.cos(alpha);
             switch (DIRECTION) {
                 case CLOCKWISE:
-                    currentColor = UTIL.getColorFromFraction(TRACK_SECTION_COLOR, TRACK_STOP_COLOR, (int) (TRACK_STOP - TRACK_SECTION), (int) (fraction));
+                    currentColor =
+                        UTIL
+                            .getColorFromFraction(TRACK_SECTION_COLOR, TRACK_STOP_COLOR,
+                                (int) (TRACK_STOP - TRACK_SECTION), (int) (fraction));
                     break;
                 case COUNTER_CLOCKWISE:
-                    currentColor = UTIL.getColorFromFraction(TRACK_SECTION_COLOR, TRACK_START_COLOR, (int) (TRACK_SECTION - TRACK_START), (int) (fraction));
+                    currentColor =
+                        UTIL
+                            .getColorFromFraction(TRACK_SECTION_COLOR, TRACK_START_COLOR,
+                                (int) (TRACK_SECTION - TRACK_START), (int) (fraction));
                     break;
             }
 
             G2.setColor(currentColor);
-            INNER_POINT.setLocation(CENTER.getX() + (RADIUS - TRACK_WIDTH) * sinValue, CENTER.getY() + (RADIUS - TRACK_WIDTH) * cosValue);
+            INNER_POINT
+                .setLocation(CENTER.getX() + (RADIUS - TRACK_WIDTH) * sinValue,
+                    CENTER.getY() + (RADIUS - TRACK_WIDTH) * cosValue);
             OUTER_POINT.setLocation(CENTER.getX() + RADIUS * sinValue, CENTER.getY() + RADIUS * cosValue);
 
             TICK.setLine(INNER_POINT, OUTER_POINT);
@@ -1731,6 +1832,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the posts for the pointer
+     * 
      * @param WIDTH
      * @param POSITIONS
      * @return the post image that is used
@@ -1741,6 +1843,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the posts for the pointer
+     * 
      * @param WIDTH
      * @param POSITIONS
      * @param image
@@ -1760,8 +1863,10 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         final int IMAGE_WIDTH = image.getWidth();
         final int IMAGE_HEIGHT = image.getHeight();
 
-        //final BufferedImage CENTER_KNOB = create_KNOB_Image((int) (WIDTH * 0.09));
-        final BufferedImage SINGLE_POST = create_KNOB_Image((int) Math.ceil(WIDTH * 0.03738316893577576), KnobType.SMALL_STD_KNOB, getModel().getKnobStyle());
+        // final BufferedImage CENTER_KNOB = create_KNOB_Image((int) (WIDTH * 0.09));
+        final BufferedImage SINGLE_POST =
+            create_KNOB_Image((int) Math.ceil(WIDTH * 0.03738316893577576), KnobType.SMALL_STD_KNOB,
+                getModel().getKnobStyle());
 
         List<PostPosition> postPositionList = Arrays.asList(POSITIONS);
 
@@ -1769,480 +1874,455 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (postPositionList.contains(PostPosition.CENTER)) {
             switch (getKnobType()) {
                 case SMALL_STD_KNOB:
-                    //G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.08411216735839844), KnobType.SMALL_STD_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.4579439163208008), (int) Math.ceil(IMAGE_WIDTH * 0.4579439163208008), null);
+                    // G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.08411216735839844),
+                    // KnobType.SMALL_STD_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.4579439163208008), (int)
+                    // Math.ceil(IMAGE_WIDTH * 0.4579439163208008), null);
 
-                    final Ellipse2D CENTER_KNOB_FRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
-                    final Point2D CENTER_KNOB_FRAME_START = new Point2D.Double(0, CENTER_KNOB_FRAME.getBounds2D().getMinY());
-                    final Point2D CENTER_KNOB_FRAME_STOP = new Point2D.Double(0, CENTER_KNOB_FRAME.getBounds2D().getMaxY());
-                    final float[] CENTER_KNOB_FRAME_FRACTIONS = {
-                        0.0f,
-                        0.46f,
-                        1.0f
-                    };
-                    final Color[] CENTER_KNOB_FRAME_COLORS = {
-                        new Color(180, 180, 180, 255),
-                        new Color(63, 63, 63, 255),
-                        new Color(40, 40, 40, 255)
-                    };
+                    final Ellipse2D CENTER_KNOB_FRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Point2D CENTER_KNOB_FRAME_START =
+                        new Point2D.Double(0, CENTER_KNOB_FRAME.getBounds2D().getMinY());
+                    final Point2D CENTER_KNOB_FRAME_STOP =
+                        new Point2D.Double(0, CENTER_KNOB_FRAME.getBounds2D().getMaxY());
+                    final float[] CENTER_KNOB_FRAME_FRACTIONS = { 0.0f, 0.46f, 1.0f };
+                    final Color[] CENTER_KNOB_FRAME_COLORS =
+                        { new Color(180, 180, 180, 255), new Color(63, 63, 63, 255), new Color(40, 40, 40, 255) };
                     Util.INSTANCE.validateGradientPoints(CENTER_KNOB_FRAME_START, CENTER_KNOB_FRAME_STOP);
-                    final LinearGradientPaint CENTER_KNOB_FRAME_GRADIENT = new LinearGradientPaint(CENTER_KNOB_FRAME_START, CENTER_KNOB_FRAME_STOP, CENTER_KNOB_FRAME_FRACTIONS, CENTER_KNOB_FRAME_COLORS);
+                    final LinearGradientPaint CENTER_KNOB_FRAME_GRADIENT =
+                        new LinearGradientPaint(CENTER_KNOB_FRAME_START, CENTER_KNOB_FRAME_STOP,
+                            CENTER_KNOB_FRAME_FRACTIONS, CENTER_KNOB_FRAME_COLORS);
                     G2.setPaint(CENTER_KNOB_FRAME_GRADIENT);
                     G2.fill(CENTER_KNOB_FRAME);
 
-                    final Ellipse2D CENTER_KNOB_MAIN = new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253, IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
-                    final Point2D CENTER_KNOB_MAIN_START = new Point2D.Double(0, CENTER_KNOB_MAIN.getBounds2D().getMinY());
-                    final Point2D CENTER_KNOB_MAIN_STOP = new Point2D.Double(0, CENTER_KNOB_MAIN.getBounds2D().getMaxY());
-                    final float[] CENTER_KNOB_MAIN_FRACTIONS = {
-                        0.0f,
-                        0.5f,
-                        1.0f
-                    };
+                    final Ellipse2D CENTER_KNOB_MAIN =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253,
+                            IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
+                    final Point2D CENTER_KNOB_MAIN_START =
+                        new Point2D.Double(0, CENTER_KNOB_MAIN.getBounds2D().getMinY());
+                    final Point2D CENTER_KNOB_MAIN_STOP =
+                        new Point2D.Double(0, CENTER_KNOB_MAIN.getBounds2D().getMaxY());
+                    final float[] CENTER_KNOB_MAIN_FRACTIONS = { 0.0f, 0.5f, 1.0f };
 
                     final Color[] CENTER_KNOB_MAIN_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            CENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xBFBFBF),
-                                new Color(0x2B2A2F),
-                                new Color(0x7D7E80)
-                            };
+                            CENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xBFBFBF), new Color(0x2B2A2F), new Color(0x7D7E80) };
                             break;
 
                         case BRASS:
-                            CENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xDFD0AE),
-                                new Color(0x7A5E3E),
-                                new Color(0xCFBE9D)
-                            };
+                            CENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xDFD0AE), new Color(0x7A5E3E), new Color(0xCFBE9D) };
                             break;
 
                         case SILVER:
 
                         default:
-                            CENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xD7D7D7),
-                                new Color(0x747474),
-                                new Color(0xD7D7D7)
-                            };
+                            CENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xD7D7D7), new Color(0x747474), new Color(0xD7D7D7) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(CENTER_KNOB_MAIN_START, CENTER_KNOB_MAIN_STOP);
-                    final LinearGradientPaint CENTER_KNOB_MAIN_GRADIENT = new LinearGradientPaint(CENTER_KNOB_MAIN_START, CENTER_KNOB_MAIN_STOP, CENTER_KNOB_MAIN_FRACTIONS, CENTER_KNOB_MAIN_COLORS);
+                    final LinearGradientPaint CENTER_KNOB_MAIN_GRADIENT =
+                        new LinearGradientPaint(CENTER_KNOB_MAIN_START, CENTER_KNOB_MAIN_STOP,
+                            CENTER_KNOB_MAIN_FRACTIONS, CENTER_KNOB_MAIN_COLORS);
                     G2.setPaint(CENTER_KNOB_MAIN_GRADIENT);
                     G2.fill(CENTER_KNOB_MAIN);
 
-                    final Ellipse2D CENTER_KNOB_INNERSHADOW = new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253, IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
-                    final Point2D CENTER_KNOB_INNERSHADOW_CENTER = new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.49065420560747663 * IMAGE_HEIGHT));
-                    final float[] CENTER_KNOB_INNERSHADOW_FRACTIONS = {
-                        0.0f,
-                        0.75f,
-                        0.76f,
-                        1.0f
-                    };
-                    final Color[] CENTER_KNOB_INNERSHADOW_COLORS = {
-                        new Color(0, 0, 0, 0),
-                        new Color(0, 0, 0, 0),
-                        new Color(0, 0, 0, 1),
-                        new Color(0, 0, 0, 51)
-                    };
-                    final RadialGradientPaint CENTER_KNOB_INNERSHADOW_GRADIENT = new RadialGradientPaint(CENTER_KNOB_INNERSHADOW_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH), CENTER_KNOB_INNERSHADOW_FRACTIONS, CENTER_KNOB_INNERSHADOW_COLORS);
+                    final Ellipse2D CENTER_KNOB_INNERSHADOW =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253,
+                            IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
+                    final Point2D CENTER_KNOB_INNERSHADOW_CENTER =
+                        new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.49065420560747663 * IMAGE_HEIGHT));
+                    final float[] CENTER_KNOB_INNERSHADOW_FRACTIONS = { 0.0f, 0.75f, 0.76f, 1.0f };
+                    final Color[] CENTER_KNOB_INNERSHADOW_COLORS =
+                        { new Color(0, 0, 0, 0), new Color(0, 0, 0, 0), new Color(0, 0, 0, 1), new Color(0, 0, 0, 51) };
+                    final RadialGradientPaint CENTER_KNOB_INNERSHADOW_GRADIENT =
+                        new RadialGradientPaint(CENTER_KNOB_INNERSHADOW_CENTER,
+                            (float) (0.03271028037383177 * IMAGE_WIDTH), CENTER_KNOB_INNERSHADOW_FRACTIONS,
+                            CENTER_KNOB_INNERSHADOW_COLORS);
                     G2.setPaint(CENTER_KNOB_INNERSHADOW_GRADIENT);
                     G2.fill(CENTER_KNOB_INNERSHADOW);
                     break;
 
                 case BIG_STD_KNOB:
-                    //G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.1214953362941742), KnobType.BIG_STD_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.4392523467540741), (int) Math.ceil(IMAGE_WIDTH * 0.4392523467540741), null);
-                    final Ellipse2D BIGCENTER_BACKGROUNDFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4392523467540741, IMAGE_HEIGHT * 0.4392523467540741, IMAGE_WIDTH * 0.1214953362941742, IMAGE_HEIGHT * 0.1214953362941742);
-                    final Point2D BIGCENTER_BACKGROUNDFRAME_START = new Point2D.Double(0, BIGCENTER_BACKGROUNDFRAME.getBounds2D().getMinY());
-                    final Point2D BIGCENTER_BACKGROUNDFRAME_STOP = new Point2D.Double(0, BIGCENTER_BACKGROUNDFRAME.getBounds2D().getMaxY());
-                    final float[] BIGCENTER_BACKGROUNDFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    // G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.1214953362941742),
+                    // KnobType.BIG_STD_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.4392523467540741), (int)
+                    // Math.ceil(IMAGE_WIDTH * 0.4392523467540741), null);
+                    final Ellipse2D BIGCENTER_BACKGROUNDFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4392523467540741, IMAGE_HEIGHT * 0.4392523467540741,
+                            IMAGE_WIDTH * 0.1214953362941742, IMAGE_HEIGHT * 0.1214953362941742);
+                    final Point2D BIGCENTER_BACKGROUNDFRAME_START =
+                        new Point2D.Double(0, BIGCENTER_BACKGROUNDFRAME.getBounds2D().getMinY());
+                    final Point2D BIGCENTER_BACKGROUNDFRAME_STOP =
+                        new Point2D.Double(0, BIGCENTER_BACKGROUNDFRAME.getBounds2D().getMaxY());
+                    final float[] BIGCENTER_BACKGROUNDFRAME_FRACTIONS = { 0.0f, 1.0f };
 
                     final Color[] BIGCENTER_BACKGROUNDFRAME_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(129, 133, 136, 255),
-                                new Color(61, 61, 73, 255)
-                            };
+                            BIGCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(129, 133, 136, 255), new Color(61, 61, 73, 255) };
                             break;
 
                         case BRASS:
-                            BIGCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(143, 117, 80, 255),
-                                new Color(100, 76, 49, 255)
-                            };
+                            BIGCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(143, 117, 80, 255), new Color(100, 76, 49, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(152, 152, 152, 255),
-                                new Color(118, 121, 126, 255)
-                            };
+                            BIGCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(152, 152, 152, 255), new Color(118, 121, 126, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGCENTER_BACKGROUNDFRAME_START, BIGCENTER_BACKGROUNDFRAME_STOP);
-                    final LinearGradientPaint BIGCENTER_BACKGROUNDFRAME_GRADIENT = new LinearGradientPaint(BIGCENTER_BACKGROUNDFRAME_START, BIGCENTER_BACKGROUNDFRAME_STOP, BIGCENTER_BACKGROUNDFRAME_FRACTIONS, BIGCENTER_BACKGROUNDFRAME_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGCENTER_BACKGROUNDFRAME_START, BIGCENTER_BACKGROUNDFRAME_STOP);
+                    final LinearGradientPaint BIGCENTER_BACKGROUNDFRAME_GRADIENT =
+                        new LinearGradientPaint(BIGCENTER_BACKGROUNDFRAME_START, BIGCENTER_BACKGROUNDFRAME_STOP,
+                            BIGCENTER_BACKGROUNDFRAME_FRACTIONS, BIGCENTER_BACKGROUNDFRAME_COLORS);
                     G2.setPaint(BIGCENTER_BACKGROUNDFRAME_GRADIENT);
                     G2.fill(BIGCENTER_BACKGROUNDFRAME);
 
-                    final Ellipse2D BIGCENTER_BACKGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.44392523169517517, IMAGE_HEIGHT * 0.44392523169517517, IMAGE_WIDTH * 0.11214950680732727, IMAGE_HEIGHT * 0.11214950680732727);
-                    final Point2D BIGCENTER_BACKGROUND_START = new Point2D.Double(0, BIGCENTER_BACKGROUND.getBounds2D().getMinY());
-                    final Point2D BIGCENTER_BACKGROUND_STOP = new Point2D.Double(0, BIGCENTER_BACKGROUND.getBounds2D().getMaxY());
-                    final float[] BIGCENTER_BACKGROUND_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGCENTER_BACKGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.44392523169517517, IMAGE_HEIGHT * 0.44392523169517517,
+                            IMAGE_WIDTH * 0.11214950680732727, IMAGE_HEIGHT * 0.11214950680732727);
+                    final Point2D BIGCENTER_BACKGROUND_START =
+                        new Point2D.Double(0, BIGCENTER_BACKGROUND.getBounds2D().getMinY());
+                    final Point2D BIGCENTER_BACKGROUND_STOP =
+                        new Point2D.Double(0, BIGCENTER_BACKGROUND.getBounds2D().getMaxY());
+                    final float[] BIGCENTER_BACKGROUND_FRACTIONS = { 0.0f, 1.0f };
 
                     final Color[] BIGCENTER_BACKGROUND_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(26, 27, 32, 255),
-                                new Color(96, 97, 102, 255)
-                            };
+                            BIGCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(26, 27, 32, 255), new Color(96, 97, 102, 255) };
                             break;
 
                         case BRASS:
-                            BIGCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(98, 75, 49, 255),
-                                new Color(149, 109, 54, 255)
-                            };
+                            BIGCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(98, 75, 49, 255), new Color(149, 109, 54, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(118, 121, 126, 255),
-                                new Color(191, 191, 191, 255)
-                            };
+                            BIGCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(118, 121, 126, 255), new Color(191, 191, 191, 255) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(BIGCENTER_BACKGROUND_START, BIGCENTER_BACKGROUND_STOP);
-                    final LinearGradientPaint BIGCENTER_BACKGROUND_GRADIENT = new LinearGradientPaint(BIGCENTER_BACKGROUND_START, BIGCENTER_BACKGROUND_STOP, BIGCENTER_BACKGROUND_FRACTIONS, BIGCENTER_BACKGROUND_COLORS);
+                    final LinearGradientPaint BIGCENTER_BACKGROUND_GRADIENT =
+                        new LinearGradientPaint(BIGCENTER_BACKGROUND_START, BIGCENTER_BACKGROUND_STOP,
+                            BIGCENTER_BACKGROUND_FRACTIONS, BIGCENTER_BACKGROUND_COLORS);
                     G2.setPaint(BIGCENTER_BACKGROUND_GRADIENT);
                     G2.fill(BIGCENTER_BACKGROUND);
 
-                    final Ellipse2D BIGCENTER_FOREGROUNDFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4532710313796997, IMAGE_HEIGHT * 0.4532710313796997, IMAGE_WIDTH * 0.09345793724060059, IMAGE_HEIGHT * 0.09345793724060059);
-                    final Point2D BIGCENTER_FOREGROUNDFRAME_START = new Point2D.Double(0, BIGCENTER_FOREGROUNDFRAME.getBounds2D().getMinY());
-                    final Point2D BIGCENTER_FOREGROUNDFRAME_STOP = new Point2D.Double(0, BIGCENTER_FOREGROUNDFRAME.getBounds2D().getMaxY());
-                    final float[] BIGCENTER_FOREGROUNDFRAME_FRACTIONS = {
-                        0.0f,
-                        0.47f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGCENTER_FOREGROUNDFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4532710313796997, IMAGE_HEIGHT * 0.4532710313796997,
+                            IMAGE_WIDTH * 0.09345793724060059, IMAGE_HEIGHT * 0.09345793724060059);
+                    final Point2D BIGCENTER_FOREGROUNDFRAME_START =
+                        new Point2D.Double(0, BIGCENTER_FOREGROUNDFRAME.getBounds2D().getMinY());
+                    final Point2D BIGCENTER_FOREGROUNDFRAME_STOP =
+                        new Point2D.Double(0, BIGCENTER_FOREGROUNDFRAME.getBounds2D().getMaxY());
+                    final float[] BIGCENTER_FOREGROUNDFRAME_FRACTIONS = { 0.0f, 0.47f, 1.0f };
 
                     final Color[] BIGCENTER_FOREGROUNDFRAME_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(56, 57, 61, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(56, 57, 61, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
 
                         case BRASS:
-                            BIGCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(147, 108, 54, 255),
-                                new Color(82, 66, 50, 255),
-                                new Color(147, 108, 54, 255)
-                            };
+                            BIGCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(147, 108, 54, 255), new Color(82, 66, 50, 255),
+                                    new Color(147, 108, 54, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(116, 116, 116, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(116, 116, 116, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGCENTER_FOREGROUNDFRAME_START, BIGCENTER_FOREGROUNDFRAME_STOP);
-                    final LinearGradientPaint BIGCENTER_FOREGROUNDFRAME_GRADIENT = new LinearGradientPaint(BIGCENTER_FOREGROUNDFRAME_START, BIGCENTER_FOREGROUNDFRAME_STOP, BIGCENTER_FOREGROUNDFRAME_FRACTIONS, BIGCENTER_FOREGROUNDFRAME_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGCENTER_FOREGROUNDFRAME_START, BIGCENTER_FOREGROUNDFRAME_STOP);
+                    final LinearGradientPaint BIGCENTER_FOREGROUNDFRAME_GRADIENT =
+                        new LinearGradientPaint(BIGCENTER_FOREGROUNDFRAME_START, BIGCENTER_FOREGROUNDFRAME_STOP,
+                            BIGCENTER_FOREGROUNDFRAME_FRACTIONS, BIGCENTER_FOREGROUNDFRAME_COLORS);
                     G2.setPaint(BIGCENTER_FOREGROUNDFRAME_GRADIENT);
                     G2.fill(BIGCENTER_FOREGROUNDFRAME);
 
-                    final Ellipse2D BIGCENTER_FOREGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
-                    final Point2D BIGCENTER_FOREGROUND_START = new Point2D.Double(0, BIGCENTER_FOREGROUND.getBounds2D().getMinY());
-                    final Point2D BIGCENTER_FOREGROUND_STOP = new Point2D.Double(0, BIGCENTER_FOREGROUND.getBounds2D().getMaxY());
-                    final float[] BIGCENTER_FOREGROUND_FRACTIONS = {
-                        0.0f,
-                        0.21f,
-                        0.5f,
-                        0.78f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGCENTER_FOREGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Point2D BIGCENTER_FOREGROUND_START =
+                        new Point2D.Double(0, BIGCENTER_FOREGROUND.getBounds2D().getMinY());
+                    final Point2D BIGCENTER_FOREGROUND_STOP =
+                        new Point2D.Double(0, BIGCENTER_FOREGROUND.getBounds2D().getMaxY());
+                    final float[] BIGCENTER_FOREGROUND_FRACTIONS = { 0.0f, 0.21f, 0.5f, 0.78f, 1.0f };
 
                     final Color[] BIGCENTER_FOREGROUND_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(94, 93, 99, 255),
-                                new Color(43, 42, 47, 255),
-                                new Color(78, 79, 81, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(94, 93, 99, 255),
+                                    new Color(43, 42, 47, 255), new Color(78, 79, 81, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
 
                         case BRASS:
-                            BIGCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(223, 208, 174, 255),
-                                new Color(159, 136, 104, 255),
-                                new Color(122, 94, 62, 255),
-                                new Color(159, 136, 104, 255),
-                                new Color(223, 208, 174, 255)
-                            };
+                            BIGCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(223, 208, 174, 255), new Color(159, 136, 104, 255),
+                                    new Color(122, 94, 62, 255), new Color(159, 136, 104, 255),
+                                    new Color(223, 208, 174, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(215, 215, 215, 255),
-                                new Color(139, 142, 145, 255),
-                                new Color(100, 100, 100, 255),
-                                new Color(139, 142, 145, 255),
-                                new Color(215, 215, 215, 255)
-                            };
+                            BIGCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(215, 215, 215, 255), new Color(139, 142, 145, 255),
+                                    new Color(100, 100, 100, 255), new Color(139, 142, 145, 255),
+                                    new Color(215, 215, 215, 255) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(BIGCENTER_FOREGROUND_START, BIGCENTER_FOREGROUND_STOP);
-                    final LinearGradientPaint BIGCENTER_FOREGROUND_GRADIENT = new LinearGradientPaint(BIGCENTER_FOREGROUND_START, BIGCENTER_FOREGROUND_STOP, BIGCENTER_FOREGROUND_FRACTIONS, BIGCENTER_FOREGROUND_COLORS);
+                    final LinearGradientPaint BIGCENTER_FOREGROUND_GRADIENT =
+                        new LinearGradientPaint(BIGCENTER_FOREGROUND_START, BIGCENTER_FOREGROUND_STOP,
+                            BIGCENTER_FOREGROUND_FRACTIONS, BIGCENTER_FOREGROUND_COLORS);
                     G2.setPaint(BIGCENTER_FOREGROUND_GRADIENT);
                     G2.fill(BIGCENTER_FOREGROUND);
                     break;
 
                 case BIG_CHROME_KNOB:
-                    //G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.14018690586090088), KnobType.BIG_CHROME_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.42990654706954956), (int) Math.ceil(IMAGE_WIDTH * 0.42990654706954956), null);
-                    final Ellipse2D CHROMEKNOB_BACKFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.42990654706954956, IMAGE_HEIGHT * 0.42990654706954956, IMAGE_WIDTH * 0.14018690586090088, IMAGE_HEIGHT * 0.14018690586090088);
-                    final Point2D CHROMEKNOB_BACKFRAME_START = new Point2D.Double((0.46261682242990654 * IMAGE_WIDTH), (0.4392523364485981 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_BACKFRAME_STOP = new Point2D.Double(((0.46261682242990654 + 0.0718114890783315) * IMAGE_WIDTH), ((0.4392523364485981 + 0.1149224055539082) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_BACKFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_BACKFRAME_COLORS = {
-                        new Color(129, 139, 140, 255),
-                        new Color(166, 171, 175, 255)
-                    };
+                    // G2.drawImage(KNOB_FACTORY.create_KNOB_Image((int) Math.ceil(IMAGE_WIDTH * 0.14018690586090088),
+                    // KnobType.BIG_CHROME_KNOB), (int) Math.ceil(IMAGE_WIDTH * 0.42990654706954956), (int)
+                    // Math.ceil(IMAGE_WIDTH * 0.42990654706954956), null);
+                    final Ellipse2D CHROMEKNOB_BACKFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.42990654706954956, IMAGE_HEIGHT * 0.42990654706954956,
+                            IMAGE_WIDTH * 0.14018690586090088, IMAGE_HEIGHT * 0.14018690586090088);
+                    final Point2D CHROMEKNOB_BACKFRAME_START =
+                        new Point2D.Double((0.46261682242990654 * IMAGE_WIDTH), (0.4392523364485981 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_BACKFRAME_STOP =
+                        new Point2D.Double(((0.46261682242990654 + 0.0718114890783315) * IMAGE_WIDTH),
+                            ((0.4392523364485981 + 0.1149224055539082) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_BACKFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_BACKFRAME_COLORS =
+                        { new Color(129, 139, 140, 255), new Color(166, 171, 175, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP);
-                    final LinearGradientPaint CHROMEKNOB_BACKFRAME_GRADIENT = new LinearGradientPaint(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP, CHROMEKNOB_BACKFRAME_FRACTIONS, CHROMEKNOB_BACKFRAME_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_BACKFRAME_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP,
+                            CHROMEKNOB_BACKFRAME_FRACTIONS, CHROMEKNOB_BACKFRAME_COLORS);
                     G2.setPaint(CHROMEKNOB_BACKFRAME_GRADIENT);
                     G2.fill(CHROMEKNOB_BACKFRAME);
 
-                    final Ellipse2D CHROMEKNOB_BACK = new Ellipse2D.Double(IMAGE_WIDTH * 0.43457943201065063, IMAGE_HEIGHT * 0.43457943201065063, IMAGE_WIDTH * 0.13084113597869873, IMAGE_HEIGHT * 0.13084113597869873);
-                    final Point2D CHROMEKNOB_BACK_CENTER = new Point2D.Double(CHROMEKNOB_BACK.getCenterX(), CHROMEKNOB_BACK.getCenterY());
-                    final float[] CHROMEKNOB_BACK_FRACTIONS = {
-                        0.0f,
-                        0.09f,
-                        0.12f,
-                        0.16f,
-                        0.25f,
-                        0.29f,
-                        0.33f,
-                        0.38f,
-                        0.48f,
-                        0.52f,
-                        0.65f,
-                        0.69f,
-                        0.8f,
-                        0.83f,
-                        0.87f,
-                        0.97f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_BACK_COLORS = {
-                        new Color(255, 255, 255, 255),
-                        new Color(255, 255, 255, 255),
-                        new Color(136, 136, 138, 255),
-                        new Color(164, 185, 190, 255),
-                        new Color(158, 179, 182, 255),
-                        new Color(112, 112, 112, 255),
-                        new Color(221, 227, 227, 255),
-                        new Color(155, 176, 179, 255),
-                        new Color(156, 176, 177, 255),
-                        new Color(254, 255, 255, 255),
-                        new Color(255, 255, 255, 255),
-                        new Color(156, 180, 180, 255),
-                        new Color(198, 209, 211, 255),
-                        new Color(246, 248, 247, 255),
-                        new Color(204, 216, 216, 255),
-                        new Color(164, 188, 190, 255),
-                        new Color(255, 255, 255, 255)
-                    };
-                    final ConicalGradientPaint CHROMEKNOB_BACK_GRADIENT = new ConicalGradientPaint(false, CHROMEKNOB_BACK_CENTER, 0, CHROMEKNOB_BACK_FRACTIONS, CHROMEKNOB_BACK_COLORS);
+                    final Ellipse2D CHROMEKNOB_BACK =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.43457943201065063, IMAGE_HEIGHT * 0.43457943201065063,
+                            IMAGE_WIDTH * 0.13084113597869873, IMAGE_HEIGHT * 0.13084113597869873);
+                    final Point2D CHROMEKNOB_BACK_CENTER =
+                        new Point2D.Double(CHROMEKNOB_BACK.getCenterX(), CHROMEKNOB_BACK.getCenterY());
+                    final float[] CHROMEKNOB_BACK_FRACTIONS =
+                        { 0.0f, 0.09f, 0.12f, 0.16f, 0.25f, 0.29f, 0.33f, 0.38f, 0.48f, 0.52f, 0.65f, 0.69f, 0.8f,
+                            0.83f, 0.87f, 0.97f, 1.0f };
+                    final Color[] CHROMEKNOB_BACK_COLORS =
+                        { new Color(255, 255, 255, 255), new Color(255, 255, 255, 255), new Color(136, 136, 138, 255),
+                            new Color(164, 185, 190, 255), new Color(158, 179, 182, 255), new Color(112, 112, 112, 255),
+                            new Color(221, 227, 227, 255), new Color(155, 176, 179, 255), new Color(156, 176, 177, 255),
+                            new Color(254, 255, 255, 255), new Color(255, 255, 255, 255), new Color(156, 180, 180, 255),
+                            new Color(198, 209, 211, 255), new Color(246, 248, 247, 255), new Color(204, 216, 216, 255),
+                            new Color(164, 188, 190, 255), new Color(255, 255, 255, 255) };
+                    final ConicalGradientPaint CHROMEKNOB_BACK_GRADIENT =
+                        new ConicalGradientPaint(false, CHROMEKNOB_BACK_CENTER, 0, CHROMEKNOB_BACK_FRACTIONS,
+                            CHROMEKNOB_BACK_COLORS);
                     G2.setPaint(CHROMEKNOB_BACK_GRADIENT);
                     G2.fill(CHROMEKNOB_BACK);
 
-                    final Ellipse2D CHROMEKNOB_FOREFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253, IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
-                    final Point2D CHROMEKNOB_FOREFRAME_START = new Point2D.Double((0.48130841121495327 * IMAGE_WIDTH), (0.4719626168224299 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_FOREFRAME_STOP = new Point2D.Double(((0.48130841121495327 + 0.033969662360372466) * IMAGE_WIDTH), ((0.4719626168224299 + 0.05036209552904459) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_FOREFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_FOREFRAME_COLORS = {
-                        new Color(225, 235, 232, 255),
-                        new Color(196, 207, 207, 255)
-                    };
+                    final Ellipse2D CHROMEKNOB_FOREFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.4672897160053253,
+                            IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542053818702698);
+                    final Point2D CHROMEKNOB_FOREFRAME_START =
+                        new Point2D.Double((0.48130841121495327 * IMAGE_WIDTH), (0.4719626168224299 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_FOREFRAME_STOP =
+                        new Point2D.Double(((0.48130841121495327 + 0.033969662360372466) * IMAGE_WIDTH),
+                            ((0.4719626168224299 + 0.05036209552904459) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_FOREFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_FOREFRAME_COLORS =
+                        { new Color(225, 235, 232, 255), new Color(196, 207, 207, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP);
-                    final LinearGradientPaint CHROMEKNOB_FOREFRAME_GRADIENT = new LinearGradientPaint(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP, CHROMEKNOB_FOREFRAME_FRACTIONS, CHROMEKNOB_FOREFRAME_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_FOREFRAME_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP,
+                            CHROMEKNOB_FOREFRAME_FRACTIONS, CHROMEKNOB_FOREFRAME_COLORS);
                     G2.setPaint(CHROMEKNOB_FOREFRAME_GRADIENT);
                     G2.fill(CHROMEKNOB_FOREFRAME);
 
-                    final Ellipse2D CHROMEKNOB_FORE = new Ellipse2D.Double(IMAGE_WIDTH * 0.4719626307487488, IMAGE_HEIGHT * 0.4719626307487488, IMAGE_WIDTH * 0.05607473850250244, IMAGE_HEIGHT * 0.05607473850250244);
-                    final Point2D CHROMEKNOB_FORE_START = new Point2D.Double((0.48130841121495327 * IMAGE_WIDTH), (0.4766355140186916 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_FORE_STOP = new Point2D.Double(((0.48130841121495327 + 0.03135661140957459) * IMAGE_WIDTH), ((0.4766355140186916 + 0.04648808818065655) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_FORE_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_FORE_COLORS = {
-                        new Color(237, 239, 237, 255),
-                        new Color(148, 161, 161, 255)
-                    };
+                    final Ellipse2D CHROMEKNOB_FORE =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4719626307487488, IMAGE_HEIGHT * 0.4719626307487488,
+                            IMAGE_WIDTH * 0.05607473850250244, IMAGE_HEIGHT * 0.05607473850250244);
+                    final Point2D CHROMEKNOB_FORE_START =
+                        new Point2D.Double((0.48130841121495327 * IMAGE_WIDTH), (0.4766355140186916 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_FORE_STOP =
+                        new Point2D.Double(((0.48130841121495327 + 0.03135661140957459) * IMAGE_WIDTH),
+                            ((0.4766355140186916 + 0.04648808818065655) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_FORE_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_FORE_COLORS =
+                        { new Color(237, 239, 237, 255), new Color(148, 161, 161, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP);
-                    final LinearGradientPaint CHROMEKNOB_FORE_GRADIENT = new LinearGradientPaint(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP, CHROMEKNOB_FORE_FRACTIONS, CHROMEKNOB_FORE_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_FORE_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP, CHROMEKNOB_FORE_FRACTIONS,
+                            CHROMEKNOB_FORE_COLORS);
                     G2.setPaint(CHROMEKNOB_FORE_GRADIENT);
                     G2.fill(CHROMEKNOB_FORE);
                     break;
 
                 case METAL_KNOB:
-                    final Ellipse2D METALKNOB_FRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
-                    final Point2D METALKNOB_FRAME_START = new Point2D.Double(0, METALKNOB_FRAME.getBounds2D().getMinY());
+                    final Ellipse2D METALKNOB_FRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.4579439163208008,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Point2D METALKNOB_FRAME_START =
+                        new Point2D.Double(0, METALKNOB_FRAME.getBounds2D().getMinY());
                     final Point2D METALKNOB_FRAME_STOP = new Point2D.Double(0, METALKNOB_FRAME.getBounds2D().getMaxY());
-                    final float[] METALKNOB_FRAME_FRACTIONS = {
-                        0.0f,
-                        0.47f,
-                        1.0f
-                    };
-                    final Color[] METALKNOB_FRAME_COLORS = {
-                        new Color(92, 95, 101, 255),
-                        new Color(46, 49, 53, 255),
-                        new Color(22, 23, 26, 255)
-                    };
+                    final float[] METALKNOB_FRAME_FRACTIONS = { 0.0f, 0.47f, 1.0f };
+                    final Color[] METALKNOB_FRAME_COLORS =
+                        { new Color(92, 95, 101, 255), new Color(46, 49, 53, 255), new Color(22, 23, 26, 255) };
                     Util.INSTANCE.validateGradientPoints(METALKNOB_FRAME_START, METALKNOB_FRAME_STOP);
-                    final LinearGradientPaint METALKNOB_FRAME_GRADIENT = new LinearGradientPaint(METALKNOB_FRAME_START, METALKNOB_FRAME_STOP, METALKNOB_FRAME_FRACTIONS, METALKNOB_FRAME_COLORS);
+                    final LinearGradientPaint METALKNOB_FRAME_GRADIENT =
+                        new LinearGradientPaint(METALKNOB_FRAME_START, METALKNOB_FRAME_STOP, METALKNOB_FRAME_FRACTIONS,
+                            METALKNOB_FRAME_COLORS);
                     G2.setPaint(METALKNOB_FRAME_GRADIENT);
                     G2.fill(METALKNOB_FRAME);
 
-                    final Ellipse2D METALKNOB_MAIN = new Ellipse2D.Double(IMAGE_WIDTH * 0.46261683106422424, IMAGE_HEIGHT * 0.46261683106422424, IMAGE_WIDTH * 0.0747663676738739, IMAGE_HEIGHT * 0.0747663676738739);
+                    final Ellipse2D METALKNOB_MAIN =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.46261683106422424, IMAGE_HEIGHT * 0.46261683106422424,
+                            IMAGE_WIDTH * 0.0747663676738739, IMAGE_HEIGHT * 0.0747663676738739);
                     final Point2D METALKNOB_MAIN_START = new Point2D.Double(0, METALKNOB_MAIN.getBounds2D().getMinY());
                     final Point2D METALKNOB_MAIN_STOP = new Point2D.Double(0, METALKNOB_MAIN.getBounds2D().getMaxY());
-                    final float[] METALKNOB_MAIN_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    final float[] METALKNOB_MAIN_FRACTIONS = { 0.0f, 1.0f };
                     final Color[] METALKNOB_MAIN_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            METALKNOB_MAIN_COLORS = new Color[]{
-                                new Color(0x2B2A2F),
-                                new Color(0x1A1B20)
-                            };
+                            METALKNOB_MAIN_COLORS = new Color[] { new Color(0x2B2A2F), new Color(0x1A1B20) };
                             break;
 
                         case BRASS:
-                            METALKNOB_MAIN_COLORS = new Color[]{
-                                new Color(0x966E36),
-                                new Color(0x7C5F3D)
-                            };
+                            METALKNOB_MAIN_COLORS = new Color[] { new Color(0x966E36), new Color(0x7C5F3D) };
                             break;
 
                         case SILVER:
 
                         default:
-                            METALKNOB_MAIN_COLORS = new Color[]{
-                                new Color(204, 204, 204, 255),
-                                new Color(87, 92, 98, 255)
-                            };
+                            METALKNOB_MAIN_COLORS =
+                                new Color[] { new Color(204, 204, 204, 255), new Color(87, 92, 98, 255) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(METALKNOB_MAIN_START, METALKNOB_MAIN_STOP);
-                    final LinearGradientPaint METALKNOB_MAIN_GRADIENT = new LinearGradientPaint(METALKNOB_MAIN_START, METALKNOB_MAIN_STOP, METALKNOB_MAIN_FRACTIONS, METALKNOB_MAIN_COLORS);
+                    final LinearGradientPaint METALKNOB_MAIN_GRADIENT =
+                        new LinearGradientPaint(METALKNOB_MAIN_START, METALKNOB_MAIN_STOP, METALKNOB_MAIN_FRACTIONS,
+                            METALKNOB_MAIN_COLORS);
                     G2.setPaint(METALKNOB_MAIN_GRADIENT);
                     G2.fill(METALKNOB_MAIN);
 
                     final GeneralPath METALKNOB_LOWERHL = new GeneralPath();
                     METALKNOB_LOWERHL.setWindingRule(Path2D.WIND_EVEN_ODD);
                     METALKNOB_LOWERHL.moveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.5280373831775701);
-                    METALKNOB_LOWERHL.curveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.5186915887850467, IMAGE_WIDTH * 0.5093457943925234, IMAGE_HEIGHT * 0.514018691588785, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.514018691588785);
-                    METALKNOB_LOWERHL.curveTo(IMAGE_WIDTH * 0.48598130841121495, IMAGE_HEIGHT * 0.514018691588785, IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.5186915887850467, IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.5280373831775701);
-                    METALKNOB_LOWERHL.curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.5327102803738317, IMAGE_WIDTH * 0.49065420560747663, IMAGE_HEIGHT * 0.5373831775700935, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.5373831775700935);
-                    METALKNOB_LOWERHL.curveTo(IMAGE_WIDTH * 0.5046728971962616, IMAGE_HEIGHT * 0.5373831775700935, IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.5327102803738317, IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.5280373831775701);
+                    METALKNOB_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.5186915887850467,
+                            IMAGE_WIDTH * 0.5093457943925234, IMAGE_HEIGHT * 0.514018691588785, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.514018691588785);
+                    METALKNOB_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.48598130841121495, IMAGE_HEIGHT * 0.514018691588785,
+                            IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.5186915887850467,
+                            IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.5280373831775701);
+                    METALKNOB_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.5327102803738317,
+                            IMAGE_WIDTH * 0.49065420560747663, IMAGE_HEIGHT * 0.5373831775700935, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.5373831775700935);
+                    METALKNOB_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.5046728971962616, IMAGE_HEIGHT * 0.5373831775700935,
+                            IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.5327102803738317,
+                            IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.5280373831775701);
                     METALKNOB_LOWERHL.closePath();
-                    final Point2D METALKNOB_LOWERHL_CENTER = new Point2D.Double((0.5 * IMAGE_WIDTH), (0.5373831775700935 * IMAGE_HEIGHT));
-                    final float[] METALKNOB_LOWERHL_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOB_LOWERHL_COLORS = {
-                        new Color(255, 255, 255, 153),
-                        new Color(255, 255, 255, 0)
-                    };
-                    final RadialGradientPaint METALKNOB_LOWERHL_GRADIENT = new RadialGradientPaint(METALKNOB_LOWERHL_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH), METALKNOB_LOWERHL_FRACTIONS, METALKNOB_LOWERHL_COLORS);
+                    final Point2D METALKNOB_LOWERHL_CENTER =
+                        new Point2D.Double((0.5 * IMAGE_WIDTH), (0.5373831775700935 * IMAGE_HEIGHT));
+                    final float[] METALKNOB_LOWERHL_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOB_LOWERHL_COLORS =
+                        { new Color(255, 255, 255, 153), new Color(255, 255, 255, 0) };
+                    final RadialGradientPaint METALKNOB_LOWERHL_GRADIENT =
+                        new RadialGradientPaint(METALKNOB_LOWERHL_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH),
+                            METALKNOB_LOWERHL_FRACTIONS, METALKNOB_LOWERHL_COLORS);
                     G2.setPaint(METALKNOB_LOWERHL_GRADIENT);
                     G2.fill(METALKNOB_LOWERHL);
 
                     final GeneralPath METALKNOB_UPPERHL = new GeneralPath();
                     METALKNOB_UPPERHL.setWindingRule(Path2D.WIND_EVEN_ODD);
                     METALKNOB_UPPERHL.moveTo(IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.48130841121495327);
-                    METALKNOB_UPPERHL.curveTo(IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.4672897196261682, IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.45794392523364486, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.45794392523364486);
-                    METALKNOB_UPPERHL.curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.45794392523364486, IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.4672897196261682, IMAGE_WIDTH * 0.46261682242990654, IMAGE_HEIGHT * 0.48130841121495327);
-                    METALKNOB_UPPERHL.curveTo(IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.48598130841121495, IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.49065420560747663, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.49065420560747663);
-                    METALKNOB_UPPERHL.curveTo(IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.49065420560747663, IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.48598130841121495, IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.48130841121495327);
+                    METALKNOB_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.4672897196261682,
+                            IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.45794392523364486, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.45794392523364486);
+                    METALKNOB_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.45794392523364486,
+                            IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.4672897196261682,
+                            IMAGE_WIDTH * 0.46261682242990654, IMAGE_HEIGHT * 0.48130841121495327);
+                    METALKNOB_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.48598130841121495,
+                            IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.49065420560747663, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.49065420560747663);
+                    METALKNOB_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.49065420560747663,
+                            IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.48598130841121495,
+                            IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.48130841121495327);
                     METALKNOB_UPPERHL.closePath();
-                    final Point2D METALKNOB_UPPERHL_CENTER = new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.45794392523364486 * IMAGE_HEIGHT));
-                    final float[] METALKNOB_UPPERHL_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOB_UPPERHL_COLORS = {
-                        new Color(255, 255, 255, 191),
-                        new Color(255, 255, 255, 0)
-                    };
-                    final RadialGradientPaint METALKNOB_UPPERHL_GRADIENT = new RadialGradientPaint(METALKNOB_UPPERHL_CENTER, (float) (0.04906542056074766 * IMAGE_WIDTH), METALKNOB_UPPERHL_FRACTIONS, METALKNOB_UPPERHL_COLORS);
+                    final Point2D METALKNOB_UPPERHL_CENTER =
+                        new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.45794392523364486 * IMAGE_HEIGHT));
+                    final float[] METALKNOB_UPPERHL_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOB_UPPERHL_COLORS =
+                        { new Color(255, 255, 255, 191), new Color(255, 255, 255, 0) };
+                    final RadialGradientPaint METALKNOB_UPPERHL_GRADIENT =
+                        new RadialGradientPaint(METALKNOB_UPPERHL_CENTER, (float) (0.04906542056074766 * IMAGE_WIDTH),
+                            METALKNOB_UPPERHL_FRACTIONS, METALKNOB_UPPERHL_COLORS);
                     G2.setPaint(METALKNOB_UPPERHL_GRADIENT);
                     G2.fill(METALKNOB_UPPERHL);
 
-                    final Ellipse2D METALKNOB_INNERFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.47663551568984985, IMAGE_HEIGHT * 0.4813084006309509, IMAGE_WIDTH * 0.04205608367919922, IMAGE_HEIGHT * 0.04205608367919922);
-                    final Point2D METALKNOB_INNERFRAME_START = new Point2D.Double(0, METALKNOB_INNERFRAME.getBounds2D().getMinY());
-                    final Point2D METALKNOB_INNERFRAME_STOP = new Point2D.Double(0, METALKNOB_INNERFRAME.getBounds2D().getMaxY());
-                    final float[] METALKNOB_INNERFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOB_INNERFRAME_COLORS = {
-                        new Color(0, 0, 0, 255),
-                        new Color(204, 204, 204, 255)
-                    };
+                    final Ellipse2D METALKNOB_INNERFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.47663551568984985, IMAGE_HEIGHT * 0.4813084006309509,
+                            IMAGE_WIDTH * 0.04205608367919922, IMAGE_HEIGHT * 0.04205608367919922);
+                    final Point2D METALKNOB_INNERFRAME_START =
+                        new Point2D.Double(0, METALKNOB_INNERFRAME.getBounds2D().getMinY());
+                    final Point2D METALKNOB_INNERFRAME_STOP =
+                        new Point2D.Double(0, METALKNOB_INNERFRAME.getBounds2D().getMaxY());
+                    final float[] METALKNOB_INNERFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOB_INNERFRAME_COLORS =
+                        { new Color(0, 0, 0, 255), new Color(204, 204, 204, 255) };
                     Util.INSTANCE.validateGradientPoints(METALKNOB_INNERFRAME_START, METALKNOB_INNERFRAME_STOP);
-                    final LinearGradientPaint METALKNOB_INNERFRAME_GRADIENT = new LinearGradientPaint(METALKNOB_INNERFRAME_START, METALKNOB_INNERFRAME_STOP, METALKNOB_INNERFRAME_FRACTIONS, METALKNOB_INNERFRAME_COLORS);
+                    final LinearGradientPaint METALKNOB_INNERFRAME_GRADIENT =
+                        new LinearGradientPaint(METALKNOB_INNERFRAME_START, METALKNOB_INNERFRAME_STOP,
+                            METALKNOB_INNERFRAME_FRACTIONS, METALKNOB_INNERFRAME_COLORS);
                     G2.setPaint(METALKNOB_INNERFRAME_GRADIENT);
                     G2.fill(METALKNOB_INNERFRAME);
 
-                    final Ellipse2D METALKNOB_INNERBACKGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.4813084006309509, IMAGE_HEIGHT * 0.4859813153743744, IMAGE_WIDTH * 0.03271031379699707, IMAGE_HEIGHT * 0.03271028399467468);
-                    final Point2D METALKNOB_INNERBACKGROUND_START = new Point2D.Double(0, METALKNOB_INNERBACKGROUND.getBounds2D().getMinY());
-                    final Point2D METALKNOB_INNERBACKGROUND_STOP = new Point2D.Double(0, METALKNOB_INNERBACKGROUND.getBounds2D().getMaxY());
-                    final float[] METALKNOB_INNERBACKGROUND_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOB_INNERBACKGROUND_COLORS = {
-                        new Color(1, 6, 11, 255),
-                        new Color(50, 52, 56, 255)
-                    };
-                    Util.INSTANCE.validateGradientPoints(METALKNOB_INNERBACKGROUND_START, METALKNOB_INNERBACKGROUND_STOP);
-                    final LinearGradientPaint METALKNOB_INNERBACKGROUND_GRADIENT = new LinearGradientPaint(METALKNOB_INNERBACKGROUND_START, METALKNOB_INNERBACKGROUND_STOP, METALKNOB_INNERBACKGROUND_FRACTIONS, METALKNOB_INNERBACKGROUND_COLORS);
+                    final Ellipse2D METALKNOB_INNERBACKGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4813084006309509, IMAGE_HEIGHT * 0.4859813153743744,
+                            IMAGE_WIDTH * 0.03271031379699707, IMAGE_HEIGHT * 0.03271028399467468);
+                    final Point2D METALKNOB_INNERBACKGROUND_START =
+                        new Point2D.Double(0, METALKNOB_INNERBACKGROUND.getBounds2D().getMinY());
+                    final Point2D METALKNOB_INNERBACKGROUND_STOP =
+                        new Point2D.Double(0, METALKNOB_INNERBACKGROUND.getBounds2D().getMaxY());
+                    final float[] METALKNOB_INNERBACKGROUND_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOB_INNERBACKGROUND_COLORS =
+                        { new Color(1, 6, 11, 255), new Color(50, 52, 56, 255) };
+                    Util.INSTANCE
+                        .validateGradientPoints(METALKNOB_INNERBACKGROUND_START, METALKNOB_INNERBACKGROUND_STOP);
+                    final LinearGradientPaint METALKNOB_INNERBACKGROUND_GRADIENT =
+                        new LinearGradientPaint(METALKNOB_INNERBACKGROUND_START, METALKNOB_INNERBACKGROUND_STOP,
+                            METALKNOB_INNERBACKGROUND_FRACTIONS, METALKNOB_INNERBACKGROUND_COLORS);
                     G2.setPaint(METALKNOB_INNERBACKGROUND_GRADIENT);
                     G2.fill(METALKNOB_INNERBACKGROUND);
                     break;
@@ -2251,32 +2331,44 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
         // Draw min bottom
         if (postPositionList.contains(PostPosition.MIN_BOTTOM)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.336448609828949), (int) (IMAGE_HEIGHT * 0.8037382960319519), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.336448609828949),
+                    (int) (IMAGE_HEIGHT * 0.8037382960319519), null);
         }
 
         // Draw max bottom post
         if (postPositionList.contains(PostPosition.MAX_BOTTOM)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.6261682510375977), (int) (IMAGE_HEIGHT * 0.8037382960319519), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.6261682510375977),
+                    (int) (IMAGE_HEIGHT * 0.8037382960319519), null);
         }
 
         // Draw min center bottom post
         if (postPositionList.contains(PostPosition.MAX_CENTER_BOTTOM)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.5233644843101501), (int) (IMAGE_HEIGHT * 0.8317757248878479), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.5233644843101501),
+                    (int) (IMAGE_HEIGHT * 0.8317757248878479), null);
         }
 
         // Draw max center top post
         if (postPositionList.contains(PostPosition.MAX_CENTER_TOP)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.5233644843101501), (int) (IMAGE_HEIGHT * 0.13084112107753754), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.5233644843101501),
+                    (int) (IMAGE_HEIGHT * 0.13084112107753754), null);
         }
 
         // Draw max right post
         if (postPositionList.contains(PostPosition.MAX_RIGHT)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.8317757248878479), (int) (IMAGE_HEIGHT * 0.514018714427948), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.8317757248878479),
+                    (int) (IMAGE_HEIGHT * 0.514018714427948), null);
         }
 
         // Draw min left post
         if (postPositionList.contains(PostPosition.MIN_LEFT)) {
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.13084112107753754), (int) (IMAGE_HEIGHT * 0.514018714427948), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.13084112107753754),
+                    (int) (IMAGE_HEIGHT * 0.514018714427948), null);
         }
 
         // Draw lower center post
@@ -2285,496 +2377,478 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (postPositionList.contains(PostPosition.LOWER_CENTER)) {
             switch (getKnobType()) {
                 case SMALL_STD_KNOB:
-                    final Ellipse2D LOWERCENTER_KNOB_FRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Ellipse2D LOWERCENTER_KNOB_FRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
                     switch (getOrientation()) {
                         case WEST:
-                            KNOB_CENTER.setLocation(LOWERCENTER_KNOB_FRAME.getCenterX(), LOWERCENTER_KNOB_FRAME.getCenterY());
+                            KNOB_CENTER
+                                .setLocation(LOWERCENTER_KNOB_FRAME.getCenterX(), LOWERCENTER_KNOB_FRAME.getCenterY());
                             G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                             break;
                     }
-                    final Point2D LOWERCENTER_KNOB_FRAME_START = new Point2D.Double(0, LOWERCENTER_KNOB_FRAME.getBounds2D().getMinY());
-                    final Point2D LOWERCENTER_KNOB_FRAME_STOP = new Point2D.Double(0, LOWERCENTER_KNOB_FRAME.getBounds2D().getMaxY());
-                    final float[] LOWERCENTER_KNOB_FRAME_FRACTIONS = {
-                        0.0f,
-                        0.46f,
-                        1.0f
-                    };
-                    final Color[] LOWERCENTER_KNOB_FRAME_COLORS = {
-                        new Color(180, 180, 180, 255),
-                        new Color(63, 63, 63, 255),
-                        new Color(40, 40, 40, 255)
-                    };
+                    final Point2D LOWERCENTER_KNOB_FRAME_START =
+                        new Point2D.Double(0, LOWERCENTER_KNOB_FRAME.getBounds2D().getMinY());
+                    final Point2D LOWERCENTER_KNOB_FRAME_STOP =
+                        new Point2D.Double(0, LOWERCENTER_KNOB_FRAME.getBounds2D().getMaxY());
+                    final float[] LOWERCENTER_KNOB_FRAME_FRACTIONS = { 0.0f, 0.46f, 1.0f };
+                    final Color[] LOWERCENTER_KNOB_FRAME_COLORS =
+                        { new Color(180, 180, 180, 255), new Color(63, 63, 63, 255), new Color(40, 40, 40, 255) };
                     Util.INSTANCE.validateGradientPoints(LOWERCENTER_KNOB_FRAME_START, LOWERCENTER_KNOB_FRAME_STOP);
-                    final LinearGradientPaint LOWERCENTER_KNOB_FRAME_GRADIENT = new LinearGradientPaint(LOWERCENTER_KNOB_FRAME_START, LOWERCENTER_KNOB_FRAME_STOP, LOWERCENTER_KNOB_FRAME_FRACTIONS, LOWERCENTER_KNOB_FRAME_COLORS);
+                    final LinearGradientPaint LOWERCENTER_KNOB_FRAME_GRADIENT =
+                        new LinearGradientPaint(LOWERCENTER_KNOB_FRAME_START, LOWERCENTER_KNOB_FRAME_STOP,
+                            LOWERCENTER_KNOB_FRAME_FRACTIONS, LOWERCENTER_KNOB_FRAME_COLORS);
                     G2.setPaint(LOWERCENTER_KNOB_FRAME_GRADIENT);
                     G2.fill(LOWERCENTER_KNOB_FRAME);
 
-                    final Ellipse2D LOWERCENTER_KNOB_MAIN = new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.7009345889091492, IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542056798934937);
-                    final Point2D LOWERCENTER_KNOB_MAIN_START = new Point2D.Double(0, LOWERCENTER_KNOB_MAIN.getBounds2D().getMinY());
-                    final Point2D LOWERCENTER_KNOB_MAIN_STOP = new Point2D.Double(0, LOWERCENTER_KNOB_MAIN.getBounds2D().getMaxY());
-                    final float[] LOWERCENTER_KNOB_MAIN_FRACTIONS = {
-                        0.0f,
-                        0.5f,
-                        1.0f
-                    };
+                    final Ellipse2D LOWERCENTER_KNOB_MAIN =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.7009345889091492,
+                            IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542056798934937);
+                    final Point2D LOWERCENTER_KNOB_MAIN_START =
+                        new Point2D.Double(0, LOWERCENTER_KNOB_MAIN.getBounds2D().getMinY());
+                    final Point2D LOWERCENTER_KNOB_MAIN_STOP =
+                        new Point2D.Double(0, LOWERCENTER_KNOB_MAIN.getBounds2D().getMaxY());
+                    final float[] LOWERCENTER_KNOB_MAIN_FRACTIONS = { 0.0f, 0.5f, 1.0f };
 
                     final Color[] LOWERCENTER_KNOB_MAIN_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            LOWERCENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xBFBFBF),
-                                new Color(0x2B2A2F),
-                                new Color(0x7D7E80)
-                            };
+                            LOWERCENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xBFBFBF), new Color(0x2B2A2F), new Color(0x7D7E80) };
                             break;
 
                         case BRASS:
-                            LOWERCENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xDFD0AE),
-                                new Color(0x7A5E3E),
-                                new Color(0xCFBE9D)
-                            };
+                            LOWERCENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xDFD0AE), new Color(0x7A5E3E), new Color(0xCFBE9D) };
                             break;
 
                         case SILVER:
 
                         default:
-                            LOWERCENTER_KNOB_MAIN_COLORS = new Color[]{
-                                new Color(0xD7D7D7),
-                                new Color(0x747474),
-                                new Color(0xD7D7D7)
-                            };
+                            LOWERCENTER_KNOB_MAIN_COLORS =
+                                new Color[] { new Color(0xD7D7D7), new Color(0x747474), new Color(0xD7D7D7) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(LOWERCENTER_KNOB_MAIN_START, LOWERCENTER_KNOB_MAIN_STOP);
-                    final LinearGradientPaint LOWERCENTER_KNOB_MAIN_GRADIENT = new LinearGradientPaint(LOWERCENTER_KNOB_MAIN_START, LOWERCENTER_KNOB_MAIN_STOP, LOWERCENTER_KNOB_MAIN_FRACTIONS, LOWERCENTER_KNOB_MAIN_COLORS);
+                    final LinearGradientPaint LOWERCENTER_KNOB_MAIN_GRADIENT =
+                        new LinearGradientPaint(LOWERCENTER_KNOB_MAIN_START, LOWERCENTER_KNOB_MAIN_STOP,
+                            LOWERCENTER_KNOB_MAIN_FRACTIONS, LOWERCENTER_KNOB_MAIN_COLORS);
                     G2.setPaint(LOWERCENTER_KNOB_MAIN_GRADIENT);
                     G2.fill(LOWERCENTER_KNOB_MAIN);
 
-                    final Ellipse2D LOWERCENTER_KNOB_INNERSHADOW = new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.7009345889091492, IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542056798934937);
-                    final Point2D LOWERCENTER_KNOB_INNERSHADOW_CENTER = new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.7242990654205608 * IMAGE_HEIGHT));
-                    final float[] LOWERCENTER_KNOB_INNERSHADOW_FRACTIONS = {
-                        0.0f,
-                        0.75f,
-                        0.76f,
-                        1.0f
-                    };
-                    final Color[] LOWERCENTER_KNOB_INNERSHADOW_COLORS = {
-                        new Color(0, 0, 0, 0),
-                        new Color(0, 0, 0, 0),
-                        new Color(0, 0, 0, 1),
-                        new Color(0, 0, 0, 51)
-                    };
-                    final RadialGradientPaint LOWERCENTER_KNOB_INNERSHADOW_GRADIENT = new RadialGradientPaint(LOWERCENTER_KNOB_INNERSHADOW_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH), LOWERCENTER_KNOB_INNERSHADOW_FRACTIONS, LOWERCENTER_KNOB_INNERSHADOW_COLORS);
+                    final Ellipse2D LOWERCENTER_KNOB_INNERSHADOW =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4672897160053253, IMAGE_HEIGHT * 0.7009345889091492,
+                            IMAGE_WIDTH * 0.06542053818702698, IMAGE_HEIGHT * 0.06542056798934937);
+                    final Point2D LOWERCENTER_KNOB_INNERSHADOW_CENTER =
+                        new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.7242990654205608 * IMAGE_HEIGHT));
+                    final float[] LOWERCENTER_KNOB_INNERSHADOW_FRACTIONS = { 0.0f, 0.75f, 0.76f, 1.0f };
+                    final Color[] LOWERCENTER_KNOB_INNERSHADOW_COLORS =
+                        { new Color(0, 0, 0, 0), new Color(0, 0, 0, 0), new Color(0, 0, 0, 1), new Color(0, 0, 0, 51) };
+                    final RadialGradientPaint LOWERCENTER_KNOB_INNERSHADOW_GRADIENT =
+                        new RadialGradientPaint(LOWERCENTER_KNOB_INNERSHADOW_CENTER,
+                            (float) (0.03271028037383177 * IMAGE_WIDTH), LOWERCENTER_KNOB_INNERSHADOW_FRACTIONS,
+                            LOWERCENTER_KNOB_INNERSHADOW_COLORS);
                     G2.setPaint(LOWERCENTER_KNOB_INNERSHADOW_GRADIENT);
                     G2.fill(LOWERCENTER_KNOB_INNERSHADOW);
                     break;
 
                 case BIG_STD_KNOB:
-                    final Ellipse2D BIGLOWERCENTER_BACKGROUNDFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4392523467540741, IMAGE_HEIGHT * 0.672897219657898, IMAGE_WIDTH * 0.1214953362941742, IMAGE_HEIGHT * 0.1214953064918518);
+                    final Ellipse2D BIGLOWERCENTER_BACKGROUNDFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4392523467540741, IMAGE_HEIGHT * 0.672897219657898,
+                            IMAGE_WIDTH * 0.1214953362941742, IMAGE_HEIGHT * 0.1214953064918518);
                     switch (getOrientation()) {
                         case WEST:
-                            KNOB_CENTER.setLocation(BIGLOWERCENTER_BACKGROUNDFRAME.getCenterX(), BIGLOWERCENTER_BACKGROUNDFRAME.getCenterY());
+                            KNOB_CENTER
+                                .setLocation(BIGLOWERCENTER_BACKGROUNDFRAME.getCenterX(),
+                                    BIGLOWERCENTER_BACKGROUNDFRAME.getCenterY());
                             G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                             break;
                     }
-                    final Point2D BIGLOWERCENTER_BACKGROUNDFRAME_START = new Point2D.Double(0, BIGLOWERCENTER_BACKGROUNDFRAME.getBounds2D().getMinY());
-                    final Point2D BIGLOWERCENTER_BACKGROUNDFRAME_STOP = new Point2D.Double(0, BIGLOWERCENTER_BACKGROUNDFRAME.getBounds2D().getMaxY());
-                    final float[] BIGLOWERCENTER_BACKGROUNDFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    final Point2D BIGLOWERCENTER_BACKGROUNDFRAME_START =
+                        new Point2D.Double(0, BIGLOWERCENTER_BACKGROUNDFRAME.getBounds2D().getMinY());
+                    final Point2D BIGLOWERCENTER_BACKGROUNDFRAME_STOP =
+                        new Point2D.Double(0, BIGLOWERCENTER_BACKGROUNDFRAME.getBounds2D().getMaxY());
+                    final float[] BIGLOWERCENTER_BACKGROUNDFRAME_FRACTIONS = { 0.0f, 1.0f };
                     final Color[] BIGLOWERCENTER_BACKGROUNDFRAME_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(129, 133, 136, 255),
-                                new Color(61, 61, 73, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(129, 133, 136, 255), new Color(61, 61, 73, 255) };
                             break;
 
                         case BRASS:
-                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(143, 117, 80, 255),
-                                new Color(100, 76, 49, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(143, 117, 80, 255), new Color(100, 76, 49, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS = new Color[]{
-                                new Color(152, 152, 152, 255),
-                                new Color(118, 121, 126, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS =
+                                new Color[] { new Color(152, 152, 152, 255), new Color(118, 121, 126, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGLOWERCENTER_BACKGROUNDFRAME_START, BIGLOWERCENTER_BACKGROUNDFRAME_STOP);
-                    final LinearGradientPaint BIGLOWERCENTER_BACKGROUNDFRAME_GRADIENT = new LinearGradientPaint(BIGLOWERCENTER_BACKGROUNDFRAME_START, BIGLOWERCENTER_BACKGROUNDFRAME_STOP, BIGLOWERCENTER_BACKGROUNDFRAME_FRACTIONS, BIGLOWERCENTER_BACKGROUNDFRAME_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGLOWERCENTER_BACKGROUNDFRAME_START,
+                            BIGLOWERCENTER_BACKGROUNDFRAME_STOP);
+                    final LinearGradientPaint BIGLOWERCENTER_BACKGROUNDFRAME_GRADIENT =
+                        new LinearGradientPaint(BIGLOWERCENTER_BACKGROUNDFRAME_START,
+                            BIGLOWERCENTER_BACKGROUNDFRAME_STOP, BIGLOWERCENTER_BACKGROUNDFRAME_FRACTIONS,
+                            BIGLOWERCENTER_BACKGROUNDFRAME_COLORS);
                     G2.setPaint(BIGLOWERCENTER_BACKGROUNDFRAME_GRADIENT);
                     G2.fill(BIGLOWERCENTER_BACKGROUNDFRAME);
 
-                    final Ellipse2D BIGLOWERCENTER_BACKGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.44392523169517517, IMAGE_HEIGHT * 0.677570104598999, IMAGE_WIDTH * 0.11214950680732727, IMAGE_HEIGHT * 0.11214953660964966);
-                    final Point2D BIGLOWERCENTER_BACKGROUND_START = new Point2D.Double(0, BIGLOWERCENTER_BACKGROUND.getBounds2D().getMinY());
-                    final Point2D BIGLOWERCENTER_BACKGROUND_STOP = new Point2D.Double(0, BIGLOWERCENTER_BACKGROUND.getBounds2D().getMaxY());
-                    final float[] BIGLOWERCENTER_BACKGROUND_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGLOWERCENTER_BACKGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.44392523169517517, IMAGE_HEIGHT * 0.677570104598999,
+                            IMAGE_WIDTH * 0.11214950680732727, IMAGE_HEIGHT * 0.11214953660964966);
+                    final Point2D BIGLOWERCENTER_BACKGROUND_START =
+                        new Point2D.Double(0, BIGLOWERCENTER_BACKGROUND.getBounds2D().getMinY());
+                    final Point2D BIGLOWERCENTER_BACKGROUND_STOP =
+                        new Point2D.Double(0, BIGLOWERCENTER_BACKGROUND.getBounds2D().getMaxY());
+                    final float[] BIGLOWERCENTER_BACKGROUND_FRACTIONS = { 0.0f, 1.0f };
                     final Color[] BIGLOWERCENTER_BACKGROUND_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGLOWERCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(26, 27, 32, 255),
-                                new Color(96, 97, 102, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(26, 27, 32, 255), new Color(96, 97, 102, 255) };
                             break;
 
                         case BRASS:
-                            BIGLOWERCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(98, 75, 49, 255),
-                                new Color(149, 109, 54, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(98, 75, 49, 255), new Color(149, 109, 54, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGLOWERCENTER_BACKGROUND_COLORS = new Color[]{
-                                new Color(118, 121, 126, 255),
-                                new Color(191, 191, 191, 255)
-                            };
+                            BIGLOWERCENTER_BACKGROUND_COLORS =
+                                new Color[] { new Color(118, 121, 126, 255), new Color(191, 191, 191, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGLOWERCENTER_BACKGROUND_START, BIGLOWERCENTER_BACKGROUND_STOP);
-                    final LinearGradientPaint BIGLOWERCENTER_BACKGROUND_GRADIENT = new LinearGradientPaint(BIGLOWERCENTER_BACKGROUND_START, BIGLOWERCENTER_BACKGROUND_STOP, BIGLOWERCENTER_BACKGROUND_FRACTIONS, BIGLOWERCENTER_BACKGROUND_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGLOWERCENTER_BACKGROUND_START, BIGLOWERCENTER_BACKGROUND_STOP);
+                    final LinearGradientPaint BIGLOWERCENTER_BACKGROUND_GRADIENT =
+                        new LinearGradientPaint(BIGLOWERCENTER_BACKGROUND_START, BIGLOWERCENTER_BACKGROUND_STOP,
+                            BIGLOWERCENTER_BACKGROUND_FRACTIONS, BIGLOWERCENTER_BACKGROUND_COLORS);
                     G2.setPaint(BIGLOWERCENTER_BACKGROUND_GRADIENT);
                     G2.fill(BIGLOWERCENTER_BACKGROUND);
 
-                    final Ellipse2D BIGLOWERCENTER_FOREGROUNDFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4532710313796997, IMAGE_HEIGHT * 0.6869158744812012, IMAGE_WIDTH * 0.09345793724060059, IMAGE_HEIGHT * 0.09345793724060059);
-                    final Point2D BIGLOWERCENTER_FOREGROUNDFRAME_START = new Point2D.Double(0, BIGLOWERCENTER_FOREGROUNDFRAME.getBounds2D().getMinY());
-                    final Point2D BIGLOWERCENTER_FOREGROUNDFRAME_STOP = new Point2D.Double(0, BIGLOWERCENTER_FOREGROUNDFRAME.getBounds2D().getMaxY());
-                    final float[] BIGLOWERCENTER_FOREGROUNDFRAME_FRACTIONS = {
-                        0.0f,
-                        0.47f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGLOWERCENTER_FOREGROUNDFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4532710313796997, IMAGE_HEIGHT * 0.6869158744812012,
+                            IMAGE_WIDTH * 0.09345793724060059, IMAGE_HEIGHT * 0.09345793724060059);
+                    final Point2D BIGLOWERCENTER_FOREGROUNDFRAME_START =
+                        new Point2D.Double(0, BIGLOWERCENTER_FOREGROUNDFRAME.getBounds2D().getMinY());
+                    final Point2D BIGLOWERCENTER_FOREGROUNDFRAME_STOP =
+                        new Point2D.Double(0, BIGLOWERCENTER_FOREGROUNDFRAME.getBounds2D().getMaxY());
+                    final float[] BIGLOWERCENTER_FOREGROUNDFRAME_FRACTIONS = { 0.0f, 0.47f, 1.0f };
                     final Color[] BIGLOWERCENTER_FOREGROUNDFRAME_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(56, 57, 61, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(56, 57, 61, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
 
                         case BRASS:
-                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(147, 108, 54, 255),
-                                new Color(82, 66, 50, 255),
-                                new Color(147, 108, 54, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(147, 108, 54, 255), new Color(82, 66, 50, 255),
+                                    new Color(147, 108, 54, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(116, 116, 116, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(116, 116, 116, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGLOWERCENTER_FOREGROUNDFRAME_START, BIGLOWERCENTER_FOREGROUNDFRAME_STOP);
-                    final LinearGradientPaint BIGLOWERCENTER_FOREGROUNDFRAME_GRADIENT = new LinearGradientPaint(BIGLOWERCENTER_FOREGROUNDFRAME_START, BIGLOWERCENTER_FOREGROUNDFRAME_STOP, BIGLOWERCENTER_FOREGROUNDFRAME_FRACTIONS, BIGLOWERCENTER_FOREGROUNDFRAME_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGLOWERCENTER_FOREGROUNDFRAME_START,
+                            BIGLOWERCENTER_FOREGROUNDFRAME_STOP);
+                    final LinearGradientPaint BIGLOWERCENTER_FOREGROUNDFRAME_GRADIENT =
+                        new LinearGradientPaint(BIGLOWERCENTER_FOREGROUNDFRAME_START,
+                            BIGLOWERCENTER_FOREGROUNDFRAME_STOP, BIGLOWERCENTER_FOREGROUNDFRAME_FRACTIONS,
+                            BIGLOWERCENTER_FOREGROUNDFRAME_COLORS);
                     G2.setPaint(BIGLOWERCENTER_FOREGROUNDFRAME_GRADIENT);
                     G2.fill(BIGLOWERCENTER_FOREGROUNDFRAME);
 
-                    final Ellipse2D BIGLOWERCENTER_FOREGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
-                    final Point2D BIGLOWERCENTER_FOREGROUND_START = new Point2D.Double(0, BIGLOWERCENTER_FOREGROUND.getBounds2D().getMinY());
-                    final Point2D BIGLOWERCENTER_FOREGROUND_STOP = new Point2D.Double(0, BIGLOWERCENTER_FOREGROUND.getBounds2D().getMaxY());
-                    final float[] BIGLOWERCENTER_FOREGROUND_FRACTIONS = {
-                        0.0f,
-                        0.21f,
-                        0.5f,
-                        0.78f,
-                        1.0f
-                    };
+                    final Ellipse2D BIGLOWERCENTER_FOREGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Point2D BIGLOWERCENTER_FOREGROUND_START =
+                        new Point2D.Double(0, BIGLOWERCENTER_FOREGROUND.getBounds2D().getMinY());
+                    final Point2D BIGLOWERCENTER_FOREGROUND_STOP =
+                        new Point2D.Double(0, BIGLOWERCENTER_FOREGROUND.getBounds2D().getMaxY());
+                    final float[] BIGLOWERCENTER_FOREGROUND_FRACTIONS = { 0.0f, 0.21f, 0.5f, 0.78f, 1.0f };
                     final Color[] BIGLOWERCENTER_FOREGROUND_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            BIGLOWERCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(191, 191, 191, 255),
-                                new Color(94, 93, 99, 255),
-                                new Color(43, 42, 47, 255),
-                                new Color(78, 79, 81, 255),
-                                new Color(143, 144, 146, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(191, 191, 191, 255), new Color(94, 93, 99, 255),
+                                    new Color(43, 42, 47, 255), new Color(78, 79, 81, 255),
+                                    new Color(143, 144, 146, 255) };
                             break;
 
                         case BRASS:
-                            BIGLOWERCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(223, 208, 174, 255),
-                                new Color(159, 136, 104, 255),
-                                new Color(122, 94, 62, 255),
-                                new Color(159, 136, 104, 255),
-                                new Color(223, 208, 174, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(223, 208, 174, 255), new Color(159, 136, 104, 255),
+                                    new Color(122, 94, 62, 255), new Color(159, 136, 104, 255),
+                                    new Color(223, 208, 174, 255) };
                             break;
 
                         case SILVER:
 
                         default:
-                            BIGLOWERCENTER_FOREGROUND_COLORS = new Color[]{
-                                new Color(215, 215, 215, 255),
-                                new Color(139, 142, 145, 255),
-                                new Color(100, 100, 100, 255),
-                                new Color(139, 142, 145, 255),
-                                new Color(215, 215, 215, 255)
-                            };
+                            BIGLOWERCENTER_FOREGROUND_COLORS =
+                                new Color[] { new Color(215, 215, 215, 255), new Color(139, 142, 145, 255),
+                                    new Color(100, 100, 100, 255), new Color(139, 142, 145, 255),
+                                    new Color(215, 215, 215, 255) };
                             break;
                     }
-                    Util.INSTANCE.validateGradientPoints(BIGLOWERCENTER_FOREGROUND_START, BIGLOWERCENTER_FOREGROUND_STOP);
-                    final LinearGradientPaint BIGLOWERCENTER_FOREGROUND_GRADIENT = new LinearGradientPaint(BIGLOWERCENTER_FOREGROUND_START, BIGLOWERCENTER_FOREGROUND_STOP, BIGLOWERCENTER_FOREGROUND_FRACTIONS, BIGLOWERCENTER_FOREGROUND_COLORS);
+                    Util.INSTANCE
+                        .validateGradientPoints(BIGLOWERCENTER_FOREGROUND_START, BIGLOWERCENTER_FOREGROUND_STOP);
+                    final LinearGradientPaint BIGLOWERCENTER_FOREGROUND_GRADIENT =
+                        new LinearGradientPaint(BIGLOWERCENTER_FOREGROUND_START, BIGLOWERCENTER_FOREGROUND_STOP,
+                            BIGLOWERCENTER_FOREGROUND_FRACTIONS, BIGLOWERCENTER_FOREGROUND_COLORS);
                     G2.setPaint(BIGLOWERCENTER_FOREGROUND_GRADIENT);
                     G2.fill(BIGLOWERCENTER_FOREGROUND);
                     break;
 
                 case BIG_CHROME_KNOB:
-                    final Ellipse2D CHROMEKNOB_BACKFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4000000059604645, IMAGE_HEIGHT * 0.6333333253860474, IMAGE_WIDTH * 0.20000001788139343, IMAGE_HEIGHT * 0.19999998807907104);
+                    final Ellipse2D CHROMEKNOB_BACKFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4000000059604645, IMAGE_HEIGHT * 0.6333333253860474,
+                            IMAGE_WIDTH * 0.20000001788139343, IMAGE_HEIGHT * 0.19999998807907104);
                     switch (getOrientation()) {
                         case WEST:
-                            KNOB_CENTER.setLocation(CHROMEKNOB_BACKFRAME.getCenterX(), CHROMEKNOB_BACKFRAME.getCenterY());
+                            KNOB_CENTER
+                                .setLocation(CHROMEKNOB_BACKFRAME.getCenterX(), CHROMEKNOB_BACKFRAME.getCenterY());
                             G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                             break;
                     }
-                    final Point2D CHROMEKNOB_BACKFRAME_START = new Point2D.Double((0.44666666666666666 * IMAGE_WIDTH), (0.6466666666666666 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_BACKFRAME_STOP = new Point2D.Double(((0.44666666666666666 + 0.10245105775175295) * IMAGE_WIDTH), ((0.6466666666666666 + 0.16395596525690903) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_BACKFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_BACKFRAME_COLORS = {
-                        new Color(129, 139, 140, 255),
-                        new Color(166, 171, 175, 255)
-                    };
+                    final Point2D CHROMEKNOB_BACKFRAME_START =
+                        new Point2D.Double((0.44666666666666666 * IMAGE_WIDTH), (0.6466666666666666 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_BACKFRAME_STOP =
+                        new Point2D.Double(((0.44666666666666666 + 0.10245105775175295) * IMAGE_WIDTH),
+                            ((0.6466666666666666 + 0.16395596525690903) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_BACKFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_BACKFRAME_COLORS =
+                        { new Color(129, 139, 140, 255), new Color(166, 171, 175, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP);
-                    final LinearGradientPaint CHROMEKNOB_BACKFRAME_GRADIENT = new LinearGradientPaint(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP, CHROMEKNOB_BACKFRAME_FRACTIONS, CHROMEKNOB_BACKFRAME_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_BACKFRAME_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_BACKFRAME_START, CHROMEKNOB_BACKFRAME_STOP,
+                            CHROMEKNOB_BACKFRAME_FRACTIONS, CHROMEKNOB_BACKFRAME_COLORS);
                     G2.setPaint(CHROMEKNOB_BACKFRAME_GRADIENT);
                     G2.fill(CHROMEKNOB_BACKFRAME);
 
-                    final Ellipse2D CHROMEKNOB_BACK = new Ellipse2D.Double(IMAGE_WIDTH * 0.40666666626930237, IMAGE_HEIGHT * 0.6399999856948853, IMAGE_WIDTH * 0.18666663765907288, IMAGE_HEIGHT * 0.18666666746139526);
-                    final Point2D CHROMEKNOB_BACK_CENTER = new Point2D.Double(CHROMEKNOB_BACK.getCenterX(), CHROMEKNOB_BACK.getCenterY());
-                    final float[] CHROMEKNOB_BACK_FRACTIONS = {
-                        0.0f,
-                        0.09f,
-                        0.12f,
-                        0.16f,
-                        0.25f,
-                        0.29f,
-                        0.33f,
-                        0.38f,
-                        0.48f,
-                        0.52f,
-                        0.65f,
-                        0.69f,
-                        0.8f,
-                        0.83f,
-                        0.87f,
-                        0.97f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_BACK_COLORS = {
-                        new Color(255, 255, 255, 255),
-                        new Color(255, 255, 255, 255),
-                        new Color(136, 136, 138, 255),
-                        new Color(164, 185, 190, 255),
-                        new Color(158, 179, 182, 255),
-                        new Color(112, 112, 112, 255),
-                        new Color(221, 227, 227, 255),
-                        new Color(155, 176, 179, 255),
-                        new Color(156, 176, 177, 255),
-                        new Color(254, 255, 255, 255),
-                        new Color(255, 255, 255, 255),
-                        new Color(156, 180, 180, 255),
-                        new Color(198, 209, 211, 255),
-                        new Color(246, 248, 247, 255),
-                        new Color(204, 216, 216, 255),
-                        new Color(164, 188, 190, 255),
-                        new Color(255, 255, 255, 255)
-                    };
-                    final ConicalGradientPaint CHROMEKNOB_BACK_GRADIENT = new ConicalGradientPaint(false, CHROMEKNOB_BACK_CENTER, 0, CHROMEKNOB_BACK_FRACTIONS, CHROMEKNOB_BACK_COLORS);
+                    final Ellipse2D CHROMEKNOB_BACK =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.40666666626930237, IMAGE_HEIGHT * 0.6399999856948853,
+                            IMAGE_WIDTH * 0.18666663765907288, IMAGE_HEIGHT * 0.18666666746139526);
+                    final Point2D CHROMEKNOB_BACK_CENTER =
+                        new Point2D.Double(CHROMEKNOB_BACK.getCenterX(), CHROMEKNOB_BACK.getCenterY());
+                    final float[] CHROMEKNOB_BACK_FRACTIONS =
+                        { 0.0f, 0.09f, 0.12f, 0.16f, 0.25f, 0.29f, 0.33f, 0.38f, 0.48f, 0.52f, 0.65f, 0.69f, 0.8f,
+                            0.83f, 0.87f, 0.97f, 1.0f };
+                    final Color[] CHROMEKNOB_BACK_COLORS =
+                        { new Color(255, 255, 255, 255), new Color(255, 255, 255, 255), new Color(136, 136, 138, 255),
+                            new Color(164, 185, 190, 255), new Color(158, 179, 182, 255), new Color(112, 112, 112, 255),
+                            new Color(221, 227, 227, 255), new Color(155, 176, 179, 255), new Color(156, 176, 177, 255),
+                            new Color(254, 255, 255, 255), new Color(255, 255, 255, 255), new Color(156, 180, 180, 255),
+                            new Color(198, 209, 211, 255), new Color(246, 248, 247, 255), new Color(204, 216, 216, 255),
+                            new Color(164, 188, 190, 255), new Color(255, 255, 255, 255) };
+                    final ConicalGradientPaint CHROMEKNOB_BACK_GRADIENT =
+                        new ConicalGradientPaint(false, CHROMEKNOB_BACK_CENTER, 0, CHROMEKNOB_BACK_FRACTIONS,
+                            CHROMEKNOB_BACK_COLORS);
                     G2.setPaint(CHROMEKNOB_BACK_GRADIENT);
                     G2.fill(CHROMEKNOB_BACK);
 
-                    final Ellipse2D CHROMEKNOB_FOREFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4533333480358124, IMAGE_HEIGHT * 0.6866666674613953, IMAGE_WIDTH * 0.09333333373069763, IMAGE_HEIGHT * 0.09333330392837524);
-                    final Point2D CHROMEKNOB_FOREFRAME_START = new Point2D.Double((0.47333333333333333 * IMAGE_WIDTH), (0.6933333333333334 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_FOREFRAME_STOP = new Point2D.Double(((0.47333333333333333 + 0.04846338496746472) * IMAGE_WIDTH), ((0.6933333333333334 + 0.07184992295477029) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_FOREFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_FOREFRAME_COLORS = {
-                        new Color(225, 235, 232, 255),
-                        new Color(196, 207, 207, 255)
-                    };
+                    final Ellipse2D CHROMEKNOB_FOREFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4533333480358124, IMAGE_HEIGHT * 0.6866666674613953,
+                            IMAGE_WIDTH * 0.09333333373069763, IMAGE_HEIGHT * 0.09333330392837524);
+                    final Point2D CHROMEKNOB_FOREFRAME_START =
+                        new Point2D.Double((0.47333333333333333 * IMAGE_WIDTH), (0.6933333333333334 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_FOREFRAME_STOP =
+                        new Point2D.Double(((0.47333333333333333 + 0.04846338496746472) * IMAGE_WIDTH),
+                            ((0.6933333333333334 + 0.07184992295477029) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_FOREFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_FOREFRAME_COLORS =
+                        { new Color(225, 235, 232, 255), new Color(196, 207, 207, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP);
-                    final LinearGradientPaint CHROMEKNOB_FOREFRAME_GRADIENT = new LinearGradientPaint(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP, CHROMEKNOB_FOREFRAME_FRACTIONS, CHROMEKNOB_FOREFRAME_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_FOREFRAME_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_FOREFRAME_START, CHROMEKNOB_FOREFRAME_STOP,
+                            CHROMEKNOB_FOREFRAME_FRACTIONS, CHROMEKNOB_FOREFRAME_COLORS);
                     G2.setPaint(CHROMEKNOB_FOREFRAME_GRADIENT);
                     G2.fill(CHROMEKNOB_FOREFRAME);
 
-                    final Ellipse2D CHROMEKNOB_FORE = new Ellipse2D.Double(IMAGE_WIDTH * 0.46000000834465027, IMAGE_HEIGHT * 0.6933333277702332, IMAGE_WIDTH * 0.08000001311302185, IMAGE_HEIGHT * 0.07999998331069946);
-                    final Point2D CHROMEKNOB_FORE_START = new Point2D.Double((0.47333333333333333 * IMAGE_WIDTH), (0.7 * IMAGE_HEIGHT));
-                    final Point2D CHROMEKNOB_FORE_STOP = new Point2D.Double(((0.47333333333333333 + 0.04473543227765974) * IMAGE_WIDTH), ((0.7 + 0.06632300580440334) * IMAGE_HEIGHT));
-                    final float[] CHROMEKNOB_FORE_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] CHROMEKNOB_FORE_COLORS = {
-                        new Color(237, 239, 237, 255),
-                        new Color(148, 161, 161, 255)
-                    };
+                    final Ellipse2D CHROMEKNOB_FORE =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.46000000834465027, IMAGE_HEIGHT * 0.6933333277702332,
+                            IMAGE_WIDTH * 0.08000001311302185, IMAGE_HEIGHT * 0.07999998331069946);
+                    final Point2D CHROMEKNOB_FORE_START =
+                        new Point2D.Double((0.47333333333333333 * IMAGE_WIDTH), (0.7 * IMAGE_HEIGHT));
+                    final Point2D CHROMEKNOB_FORE_STOP =
+                        new Point2D.Double(((0.47333333333333333 + 0.04473543227765974) * IMAGE_WIDTH),
+                            ((0.7 + 0.06632300580440334) * IMAGE_HEIGHT));
+                    final float[] CHROMEKNOB_FORE_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] CHROMEKNOB_FORE_COLORS =
+                        { new Color(237, 239, 237, 255), new Color(148, 161, 161, 255) };
                     Util.INSTANCE.validateGradientPoints(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP);
-                    final LinearGradientPaint CHROMEKNOB_FORE_GRADIENT = new LinearGradientPaint(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP, CHROMEKNOB_FORE_FRACTIONS, CHROMEKNOB_FORE_COLORS);
+                    final LinearGradientPaint CHROMEKNOB_FORE_GRADIENT =
+                        new LinearGradientPaint(CHROMEKNOB_FORE_START, CHROMEKNOB_FORE_STOP, CHROMEKNOB_FORE_FRACTIONS,
+                            CHROMEKNOB_FORE_COLORS);
                     G2.setPaint(CHROMEKNOB_FORE_GRADIENT);
                     G2.fill(CHROMEKNOB_FORE);
                     break;
 
                 case METAL_KNOB:
-                    final Ellipse2D METALKNOBLC_FRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022, IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
+                    final Ellipse2D METALKNOBLC_FRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4579439163208008, IMAGE_HEIGHT * 0.6915887594223022,
+                            IMAGE_WIDTH * 0.08411216735839844, IMAGE_HEIGHT * 0.08411216735839844);
                     switch (getOrientation()) {
                         case WEST:
                             KNOB_CENTER.setLocation(METALKNOBLC_FRAME.getCenterX(), METALKNOBLC_FRAME.getCenterY());
                             G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                             break;
                     }
-                    final Point2D METALKNOBLC_FRAME_START = new Point2D.Double(0, METALKNOBLC_FRAME.getBounds2D().getMinY());
-                    final Point2D METALKNOBLC_FRAME_STOP = new Point2D.Double(0, METALKNOBLC_FRAME.getBounds2D().getMaxY());
-                    final float[] METALKNOBLC_FRAME_FRACTIONS = {
-                        0.0f,
-                        0.47f,
-                        1.0f
-                    };
-                    final Color[] METALKNOBLC_FRAME_COLORS = {
-                        new Color(92, 95, 101, 255),
-                        new Color(46, 49, 53, 255),
-                        new Color(22, 23, 26, 255)
-                    };
+                    final Point2D METALKNOBLC_FRAME_START =
+                        new Point2D.Double(0, METALKNOBLC_FRAME.getBounds2D().getMinY());
+                    final Point2D METALKNOBLC_FRAME_STOP =
+                        new Point2D.Double(0, METALKNOBLC_FRAME.getBounds2D().getMaxY());
+                    final float[] METALKNOBLC_FRAME_FRACTIONS = { 0.0f, 0.47f, 1.0f };
+                    final Color[] METALKNOBLC_FRAME_COLORS =
+                        { new Color(92, 95, 101, 255), new Color(46, 49, 53, 255), new Color(22, 23, 26, 255) };
                     Util.INSTANCE.validateGradientPoints(METALKNOBLC_FRAME_START, METALKNOBLC_FRAME_STOP);
-                    final LinearGradientPaint METALKNOBLC_FRAME_GRADIENT = new LinearGradientPaint(METALKNOBLC_FRAME_START, METALKNOBLC_FRAME_STOP, METALKNOBLC_FRAME_FRACTIONS, METALKNOBLC_FRAME_COLORS);
+                    final LinearGradientPaint METALKNOBLC_FRAME_GRADIENT =
+                        new LinearGradientPaint(METALKNOBLC_FRAME_START, METALKNOBLC_FRAME_STOP,
+                            METALKNOBLC_FRAME_FRACTIONS, METALKNOBLC_FRAME_COLORS);
                     G2.setPaint(METALKNOBLC_FRAME_GRADIENT);
                     G2.fill(METALKNOBLC_FRAME);
 
-                    final Ellipse2D METALKNOBLC_MAIN = new Ellipse2D.Double(IMAGE_WIDTH * 0.46261683106422424, IMAGE_HEIGHT * 0.6962617039680481, IMAGE_WIDTH * 0.0747663676738739, IMAGE_HEIGHT * 0.07476633787155151);
-                    final Point2D METALKNOBLC_MAIN_START = new Point2D.Double(0, METALKNOBLC_MAIN.getBounds2D().getMinY());
-                    final Point2D METALKNOBLC_MAIN_STOP = new Point2D.Double(0, METALKNOBLC_MAIN.getBounds2D().getMaxY());
-                    final float[] METALKNOBLC_MAIN_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
+                    final Ellipse2D METALKNOBLC_MAIN =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.46261683106422424, IMAGE_HEIGHT * 0.6962617039680481,
+                            IMAGE_WIDTH * 0.0747663676738739, IMAGE_HEIGHT * 0.07476633787155151);
+                    final Point2D METALKNOBLC_MAIN_START =
+                        new Point2D.Double(0, METALKNOBLC_MAIN.getBounds2D().getMinY());
+                    final Point2D METALKNOBLC_MAIN_STOP =
+                        new Point2D.Double(0, METALKNOBLC_MAIN.getBounds2D().getMaxY());
+                    final float[] METALKNOBLC_MAIN_FRACTIONS = { 0.0f, 1.0f };
                     final Color[] METALKNOBLC_MAIN_COLORS;
                     switch (getModel().getKnobStyle()) {
                         case BLACK:
-                            METALKNOBLC_MAIN_COLORS = new Color[]{
-                                new Color(0x2B2A2F),
-                                new Color(0x1A1B20)
-                            };
+                            METALKNOBLC_MAIN_COLORS = new Color[] { new Color(0x2B2A2F), new Color(0x1A1B20) };
                             break;
 
                         case BRASS:
-                            METALKNOBLC_MAIN_COLORS = new Color[]{
-                                new Color(0x966E36),
-                                new Color(0x7C5F3D)
-                            };
+                            METALKNOBLC_MAIN_COLORS = new Color[] { new Color(0x966E36), new Color(0x7C5F3D) };
                             break;
 
                         case SILVER:
 
                         default:
-                            METALKNOBLC_MAIN_COLORS = new Color[]{
-                                new Color(204, 204, 204, 255),
-                                new Color(87, 92, 98, 255)
-                            };
+                            METALKNOBLC_MAIN_COLORS =
+                                new Color[] { new Color(204, 204, 204, 255), new Color(87, 92, 98, 255) };
                             break;
                     }
                     Util.INSTANCE.validateGradientPoints(METALKNOBLC_MAIN_START, METALKNOBLC_MAIN_STOP);
-                    final LinearGradientPaint METALKNOBLC_MAIN_GRADIENT = new LinearGradientPaint(METALKNOBLC_MAIN_START, METALKNOBLC_MAIN_STOP, METALKNOBLC_MAIN_FRACTIONS, METALKNOBLC_MAIN_COLORS);
+                    final LinearGradientPaint METALKNOBLC_MAIN_GRADIENT =
+                        new LinearGradientPaint(METALKNOBLC_MAIN_START, METALKNOBLC_MAIN_STOP,
+                            METALKNOBLC_MAIN_FRACTIONS, METALKNOBLC_MAIN_COLORS);
                     G2.setPaint(METALKNOBLC_MAIN_GRADIENT);
                     G2.fill(METALKNOBLC_MAIN);
 
                     final GeneralPath METALKNOBLC_LOWERHL = new GeneralPath();
                     METALKNOBLC_LOWERHL.setWindingRule(Path2D.WIND_EVEN_ODD);
                     METALKNOBLC_LOWERHL.moveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.7616822429906542);
-                    METALKNOBLC_LOWERHL.curveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.7523364485981309, IMAGE_WIDTH * 0.5093457943925234, IMAGE_HEIGHT * 0.7476635514018691, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.7476635514018691);
-                    METALKNOBLC_LOWERHL.curveTo(IMAGE_WIDTH * 0.48598130841121495, IMAGE_HEIGHT * 0.7476635514018691, IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.7523364485981309, IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.7616822429906542);
-                    METALKNOBLC_LOWERHL.curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.7663551401869159, IMAGE_WIDTH * 0.49065420560747663, IMAGE_HEIGHT * 0.7710280373831776, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.7710280373831776);
-                    METALKNOBLC_LOWERHL.curveTo(IMAGE_WIDTH * 0.5046728971962616, IMAGE_HEIGHT * 0.7710280373831776, IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.7663551401869159, IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.7616822429906542);
+                    METALKNOBLC_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.7523364485981309,
+                            IMAGE_WIDTH * 0.5093457943925234, IMAGE_HEIGHT * 0.7476635514018691, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.7476635514018691);
+                    METALKNOBLC_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.48598130841121495, IMAGE_HEIGHT * 0.7476635514018691,
+                            IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.7523364485981309,
+                            IMAGE_WIDTH * 0.4766355140186916, IMAGE_HEIGHT * 0.7616822429906542);
+                    METALKNOBLC_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.7663551401869159,
+                            IMAGE_WIDTH * 0.49065420560747663, IMAGE_HEIGHT * 0.7710280373831776, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.7710280373831776);
+                    METALKNOBLC_LOWERHL
+                        .curveTo(IMAGE_WIDTH * 0.5046728971962616, IMAGE_HEIGHT * 0.7710280373831776,
+                            IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.7663551401869159,
+                            IMAGE_WIDTH * 0.5186915887850467, IMAGE_HEIGHT * 0.7616822429906542);
                     METALKNOBLC_LOWERHL.closePath();
-                    final Point2D METALKNOBLC_LOWERHL_CENTER = new Point2D.Double((0.5 * IMAGE_WIDTH), (0.7710280373831776 * IMAGE_HEIGHT));
-                    final float[] METALKNOBLC_LOWERHL_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOBLC_LOWERHL_COLORS = {
-                        new Color(255, 255, 255, 153),
-                        new Color(255, 255, 255, 0)
-                    };
-                    final RadialGradientPaint METALKNOBLC_LOWERHL_GRADIENT = new RadialGradientPaint(METALKNOBLC_LOWERHL_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH), METALKNOBLC_LOWERHL_FRACTIONS, METALKNOBLC_LOWERHL_COLORS);
+                    final Point2D METALKNOBLC_LOWERHL_CENTER =
+                        new Point2D.Double((0.5 * IMAGE_WIDTH), (0.7710280373831776 * IMAGE_HEIGHT));
+                    final float[] METALKNOBLC_LOWERHL_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOBLC_LOWERHL_COLORS =
+                        { new Color(255, 255, 255, 153), new Color(255, 255, 255, 0) };
+                    final RadialGradientPaint METALKNOBLC_LOWERHL_GRADIENT =
+                        new RadialGradientPaint(METALKNOBLC_LOWERHL_CENTER, (float) (0.03271028037383177 * IMAGE_WIDTH),
+                            METALKNOBLC_LOWERHL_FRACTIONS, METALKNOBLC_LOWERHL_COLORS);
                     G2.setPaint(METALKNOBLC_LOWERHL_GRADIENT);
                     G2.fill(METALKNOBLC_LOWERHL);
 
                     final GeneralPath METALKNOBLC_UPPERHL = new GeneralPath();
                     METALKNOBLC_UPPERHL.setWindingRule(Path2D.WIND_EVEN_ODD);
                     METALKNOBLC_UPPERHL.moveTo(IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.7149532710280374);
-                    METALKNOBLC_UPPERHL.curveTo(IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.7009345794392523, IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.6915887850467289, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.6915887850467289);
-                    METALKNOBLC_UPPERHL.curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.6915887850467289, IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.7009345794392523, IMAGE_WIDTH * 0.46261682242990654, IMAGE_HEIGHT * 0.7149532710280374);
-                    METALKNOBLC_UPPERHL.curveTo(IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.719626168224299, IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.7242990654205608, IMAGE_WIDTH * 0.5, IMAGE_HEIGHT * 0.7242990654205608);
-                    METALKNOBLC_UPPERHL.curveTo(IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.7242990654205608, IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.719626168224299, IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.7149532710280374);
+                    METALKNOBLC_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.7009345794392523,
+                            IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.6915887850467289, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.6915887850467289);
+                    METALKNOBLC_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.6915887850467289,
+                            IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.7009345794392523,
+                            IMAGE_WIDTH * 0.46261682242990654, IMAGE_HEIGHT * 0.7149532710280374);
+                    METALKNOBLC_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.4672897196261682, IMAGE_HEIGHT * 0.719626168224299,
+                            IMAGE_WIDTH * 0.48130841121495327, IMAGE_HEIGHT * 0.7242990654205608, IMAGE_WIDTH * 0.5,
+                            IMAGE_HEIGHT * 0.7242990654205608);
+                    METALKNOBLC_UPPERHL
+                        .curveTo(IMAGE_WIDTH * 0.514018691588785, IMAGE_HEIGHT * 0.7242990654205608,
+                            IMAGE_WIDTH * 0.5280373831775701, IMAGE_HEIGHT * 0.719626168224299,
+                            IMAGE_WIDTH * 0.5327102803738317, IMAGE_HEIGHT * 0.7149532710280374);
                     METALKNOBLC_UPPERHL.closePath();
-                    final Point2D METALKNOBLC_UPPERHL_CENTER = new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.6915887850467289 * IMAGE_HEIGHT));
-                    final float[] METALKNOBLC_UPPERHL_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOBLC_UPPERHL_COLORS = {
-                        new Color(255, 255, 255, 191),
-                        new Color(255, 255, 255, 0)
-                    };
-                    final RadialGradientPaint METALKNOBLC_UPPERHL_GRADIENT = new RadialGradientPaint(METALKNOBLC_UPPERHL_CENTER, (float) (0.04906542056074766 * IMAGE_WIDTH), METALKNOBLC_UPPERHL_FRACTIONS, METALKNOBLC_UPPERHL_COLORS);
+                    final Point2D METALKNOBLC_UPPERHL_CENTER =
+                        new Point2D.Double((0.4953271028037383 * IMAGE_WIDTH), (0.6915887850467289 * IMAGE_HEIGHT));
+                    final float[] METALKNOBLC_UPPERHL_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOBLC_UPPERHL_COLORS =
+                        { new Color(255, 255, 255, 191), new Color(255, 255, 255, 0) };
+                    final RadialGradientPaint METALKNOBLC_UPPERHL_GRADIENT =
+                        new RadialGradientPaint(METALKNOBLC_UPPERHL_CENTER, (float) (0.04906542056074766 * IMAGE_WIDTH),
+                            METALKNOBLC_UPPERHL_FRACTIONS, METALKNOBLC_UPPERHL_COLORS);
                     G2.setPaint(METALKNOBLC_UPPERHL_GRADIENT);
                     G2.fill(METALKNOBLC_UPPERHL);
 
-                    final Ellipse2D METALKNOBLC_INNERFRAME = new Ellipse2D.Double(IMAGE_WIDTH * 0.47663551568984985, IMAGE_HEIGHT * 0.7149532437324524, IMAGE_WIDTH * 0.04205608367919922, IMAGE_HEIGHT * 0.04205608367919922);
-                    final Point2D METALKNOBLC_INNERFRAME_START = new Point2D.Double(0, METALKNOBLC_INNERFRAME.getBounds2D().getMinY());
-                    final Point2D METALKNOBLC_INNERFRAME_STOP = new Point2D.Double(0, METALKNOBLC_INNERFRAME.getBounds2D().getMaxY());
-                    final float[] METALKNOBLC_INNERFRAME_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOBLC_INNERFRAME_COLORS = {
-                        new Color(0, 0, 0, 255),
-                        new Color(204, 204, 204, 255)
-                    };
+                    final Ellipse2D METALKNOBLC_INNERFRAME =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.47663551568984985, IMAGE_HEIGHT * 0.7149532437324524,
+                            IMAGE_WIDTH * 0.04205608367919922, IMAGE_HEIGHT * 0.04205608367919922);
+                    final Point2D METALKNOBLC_INNERFRAME_START =
+                        new Point2D.Double(0, METALKNOBLC_INNERFRAME.getBounds2D().getMinY());
+                    final Point2D METALKNOBLC_INNERFRAME_STOP =
+                        new Point2D.Double(0, METALKNOBLC_INNERFRAME.getBounds2D().getMaxY());
+                    final float[] METALKNOBLC_INNERFRAME_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOBLC_INNERFRAME_COLORS =
+                        { new Color(0, 0, 0, 255), new Color(204, 204, 204, 255) };
                     Util.INSTANCE.validateGradientPoints(METALKNOBLC_INNERFRAME_START, METALKNOBLC_INNERFRAME_STOP);
-                    final LinearGradientPaint METALKNOBLC_INNERFRAME_GRADIENT = new LinearGradientPaint(METALKNOBLC_INNERFRAME_START, METALKNOBLC_INNERFRAME_STOP, METALKNOBLC_INNERFRAME_FRACTIONS, METALKNOBLC_INNERFRAME_COLORS);
+                    final LinearGradientPaint METALKNOBLC_INNERFRAME_GRADIENT =
+                        new LinearGradientPaint(METALKNOBLC_INNERFRAME_START, METALKNOBLC_INNERFRAME_STOP,
+                            METALKNOBLC_INNERFRAME_FRACTIONS, METALKNOBLC_INNERFRAME_COLORS);
                     G2.setPaint(METALKNOBLC_INNERFRAME_GRADIENT);
                     G2.fill(METALKNOBLC_INNERFRAME);
 
-                    final Ellipse2D METALKNOBLC_INNERBACKGROUND = new Ellipse2D.Double(IMAGE_WIDTH * 0.4813084006309509, IMAGE_HEIGHT * 0.7196261882781982, IMAGE_WIDTH * 0.03271031379699707, IMAGE_HEIGHT * 0.032710254192352295);
-                    final Point2D METALKNOBLC_INNERBACKGROUND_START = new Point2D.Double(0, METALKNOBLC_INNERBACKGROUND.getBounds2D().getMinY());
-                    final Point2D METALKNOBLC_INNERBACKGROUND_STOP = new Point2D.Double(0, METALKNOBLC_INNERBACKGROUND.getBounds2D().getMaxY());
-                    final float[] METALKNOBLC_INNERBACKGROUND_FRACTIONS = {
-                        0.0f,
-                        1.0f
-                    };
-                    final Color[] METALKNOBLC_INNERBACKGROUND_COLORS = {
-                        new Color(1, 6, 11, 255),
-                        new Color(50, 52, 56, 255)
-                    };
-                    Util.INSTANCE.validateGradientPoints(METALKNOBLC_INNERBACKGROUND_START, METALKNOBLC_INNERBACKGROUND_STOP);
-                    final LinearGradientPaint METALKNOBLC_INNERBACKGROUND_GRADIENT = new LinearGradientPaint(METALKNOBLC_INNERBACKGROUND_START, METALKNOBLC_INNERBACKGROUND_STOP, METALKNOBLC_INNERBACKGROUND_FRACTIONS, METALKNOBLC_INNERBACKGROUND_COLORS);
+                    final Ellipse2D METALKNOBLC_INNERBACKGROUND =
+                        new Ellipse2D.Double(IMAGE_WIDTH * 0.4813084006309509, IMAGE_HEIGHT * 0.7196261882781982,
+                            IMAGE_WIDTH * 0.03271031379699707, IMAGE_HEIGHT * 0.032710254192352295);
+                    final Point2D METALKNOBLC_INNERBACKGROUND_START =
+                        new Point2D.Double(0, METALKNOBLC_INNERBACKGROUND.getBounds2D().getMinY());
+                    final Point2D METALKNOBLC_INNERBACKGROUND_STOP =
+                        new Point2D.Double(0, METALKNOBLC_INNERBACKGROUND.getBounds2D().getMaxY());
+                    final float[] METALKNOBLC_INNERBACKGROUND_FRACTIONS = { 0.0f, 1.0f };
+                    final Color[] METALKNOBLC_INNERBACKGROUND_COLORS =
+                        { new Color(1, 6, 11, 255), new Color(50, 52, 56, 255) };
+                    Util.INSTANCE
+                        .validateGradientPoints(METALKNOBLC_INNERBACKGROUND_START, METALKNOBLC_INNERBACKGROUND_STOP);
+                    final LinearGradientPaint METALKNOBLC_INNERBACKGROUND_GRADIENT =
+                        new LinearGradientPaint(METALKNOBLC_INNERBACKGROUND_START, METALKNOBLC_INNERBACKGROUND_STOP,
+                            METALKNOBLC_INNERBACKGROUND_FRACTIONS, METALKNOBLC_INNERBACKGROUND_COLORS);
                     G2.setPaint(METALKNOBLC_INNERBACKGROUND_GRADIENT);
                     G2.fill(METALKNOBLC_INNERBACKGROUND);
                     break;
@@ -2788,11 +2862,15 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (postPositionList.contains(PostPosition.SMALL_GAUGE_MAX_RIGHT)) {
             switch (getOrientation()) {
                 case WEST:
-                    KNOB_CENTER.setLocation(IMAGE_WIDTH * 0.7803738117218018 + SINGLE_POST.getWidth() / 2.0, IMAGE_HEIGHT * 0.44859811663627625 + SINGLE_POST.getHeight() / 2.0);
+                    KNOB_CENTER
+                        .setLocation(IMAGE_WIDTH * 0.7803738117218018 + SINGLE_POST.getWidth() / 2.0,
+                            IMAGE_HEIGHT * 0.44859811663627625 + SINGLE_POST.getHeight() / 2.0);
                     G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                     break;
             }
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.7803738117218018), (int) (IMAGE_HEIGHT * 0.44859811663627625), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.7803738117218018),
+                    (int) (IMAGE_HEIGHT * 0.44859811663627625), null);
             G2.setTransform(OLD_TRANSFORM);
         }
 
@@ -2800,11 +2878,15 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (postPositionList.contains(PostPosition.SMALL_GAUGE_MIN_LEFT)) {
             switch (getOrientation()) {
                 case WEST:
-                    KNOB_CENTER.setLocation(IMAGE_WIDTH * 0.1822429895401001 + SINGLE_POST.getWidth() / 2.0, IMAGE_HEIGHT * 0.44859811663627625 + SINGLE_POST.getHeight() / 2.0);
+                    KNOB_CENTER
+                        .setLocation(IMAGE_WIDTH * 0.1822429895401001 + SINGLE_POST.getWidth() / 2.0,
+                            IMAGE_HEIGHT * 0.44859811663627625 + SINGLE_POST.getHeight() / 2.0);
                     G2.rotate(Math.PI / 2, KNOB_CENTER.getX(), KNOB_CENTER.getY());
                     break;
             }
-            G2.drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.1822429895401001), (int) (IMAGE_HEIGHT * 0.44859811663627625), null);
+            G2
+                .drawImage(SINGLE_POST, (int) (IMAGE_WIDTH * 0.1822429895401001),
+                    (int) (IMAGE_HEIGHT * 0.44859811663627625), null);
             G2.setTransform(OLD_TRANSFORM);
         }
 
@@ -2815,6 +2897,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Creates a single alignment post image that could be placed on all the positions where it is needed
+     * 
      * @param WIDTH
      * @param KNOB_TYPE
      * @return a buffered image that contains a single alignment post of the given type
@@ -2825,6 +2908,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the threshold indicator.
+     * 
      * @param WIDTH
      * @return the threshold image that is used
      */
@@ -2877,20 +2961,13 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                 break;
         }
 
-        final float[] THRESHOLD_FRACTIONS = {
-            0.0f,
-            0.3f,
-            0.59f,
-            1.0f
-        };
-        final Color[] THRESHOLD_COLORS = {
-            getThresholdColor().DARK,
-            getThresholdColor().MEDIUM,
-            getThresholdColor().MEDIUM,
-            getThresholdColor().DARK
-        };
+        final float[] THRESHOLD_FRACTIONS = { 0.0f, 0.3f, 0.59f, 1.0f };
+        final Color[] THRESHOLD_COLORS =
+            { getThresholdColor().DARK, getThresholdColor().MEDIUM, getThresholdColor().MEDIUM,
+                getThresholdColor().DARK };
         Util.INSTANCE.validateGradientPoints(THRESHOLD_START, THRESHOLD_STOP);
-        final LinearGradientPaint THRESHOLD_GRADIENT = new LinearGradientPaint(THRESHOLD_START, THRESHOLD_STOP, THRESHOLD_FRACTIONS, THRESHOLD_COLORS);
+        final LinearGradientPaint THRESHOLD_GRADIENT =
+            new LinearGradientPaint(THRESHOLD_START, THRESHOLD_STOP, THRESHOLD_FRACTIONS, THRESHOLD_COLORS);
         G2.setPaint(THRESHOLD_GRADIENT);
         G2.fill(THRESHOLD);
 
@@ -2905,6 +2982,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the MinMeasuredValue and MaxMeasuredValue dependend
+     * 
      * @param WIDTH
      * @param COLOR
      * @return the image of the min or max measured value
@@ -2915,12 +2993,14 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the MinMeasuredValue and MaxMeasuredValue dependend
+     * 
      * @param WIDTH
      * @param COLOR
      * @param ROTATION_OFFSET
      * @return the image of the min or max measured value
      */
-    protected BufferedImage create_MEASURED_VALUE_Image(final int WIDTH, final Color COLOR, final double ROTATION_OFFSET) {
+    protected BufferedImage create_MEASURED_VALUE_Image(
+        final int WIDTH, final Color COLOR, final double ROTATION_OFFSET) {
         if (WIDTH <= 36) // 36 is needed otherwise the image size could be smaller than 1
         {
             return UTIL.createImage(1, 1, Transparency.TRANSLUCENT);
@@ -2952,6 +3032,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the pointer. This pointer is centered in the gauge and of PointerType FG_TYPE1.
+     * 
      * @param WIDTH
      * @return the pointer image that is used in all gauges that have a centered pointer
      */
@@ -2961,6 +3042,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the pointer. This pointer is centered in the gauge.
+     * 
      * @param WIDTH
      * @param POINTER_TYPE
      * @return the pointer image that is used in all gauges that have a centered pointer
@@ -2968,36 +3050,46 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
     protected BufferedImage create_POINTER_Image(final int WIDTH, final PointerType POINTER_TYPE) {
         if (getPointerColor() != ColorDef.CUSTOM) {
             return POINTER_FACTORY.createStandardPointer(WIDTH, POINTER_TYPE, getPointerColor(), getBackgroundColor());
-        } else {
-            return POINTER_FACTORY.createStandardPointer(WIDTH, POINTER_TYPE, getPointerColor(), getModel().getCustomPointerColorObject(), getBackgroundColor());
+        }
+        else {
+            return POINTER_FACTORY
+                .createStandardPointer(WIDTH, POINTER_TYPE, getPointerColor(), getModel().getCustomPointerColorObject(),
+                    getBackgroundColor());
         }
     }
 
     /**
      * Returns the image of the pointer. This pointer is centered in the gauge.
+     * 
      * @param WIDTH
      * @param POINTER_TYPE
      * @param POINTER_COLOR
      * @return the pointer image that is used in all gauges that have a centered pointer
      */
-    protected BufferedImage create_POINTER_Image(final int WIDTH, final PointerType POINTER_TYPE, final ColorDef POINTER_COLOR) {
+    protected BufferedImage create_POINTER_Image(
+        final int WIDTH, final PointerType POINTER_TYPE, final ColorDef POINTER_COLOR) {
         return POINTER_FACTORY.createStandardPointer(WIDTH, POINTER_TYPE, POINTER_COLOR, getBackgroundColor());
     }
 
     /**
      * Returns the image of the pointer. This pointer is centered in the gauge.
+     * 
      * @param WIDTH
      * @param POINTER_TYPE
      * @param POINTER_COLOR
      * @param CUSTOM_POINTER_COLOR
      * @return the pointer image that is used in all gauges that have a centered pointer
      */
-    protected BufferedImage create_POINTER_Image(final int WIDTH, final PointerType POINTER_TYPE, final ColorDef POINTER_COLOR, final CustomColorDef CUSTOM_POINTER_COLOR) {
-        return POINTER_FACTORY.createStandardPointer(WIDTH, POINTER_TYPE, POINTER_COLOR, CUSTOM_POINTER_COLOR, getBackgroundColor());
+    protected BufferedImage create_POINTER_Image(
+        final int WIDTH, final PointerType POINTER_TYPE, final ColorDef POINTER_COLOR,
+        final CustomColorDef CUSTOM_POINTER_COLOR) {
+        return POINTER_FACTORY
+            .createStandardPointer(WIDTH, POINTER_TYPE, POINTER_COLOR, CUSTOM_POINTER_COLOR, getBackgroundColor());
     }
 
     /**
      * Returns the image of the pointer shadow. This shadow is centered in the gauge
+     * 
      * @param WIDTH
      * @return the pointer shadow image that is used in all gauges that have a centered pointer
      */
@@ -3007,6 +3099,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the pointer shadow. This shadow is centered in the gauge
+     * 
      * @param WIDTH
      * @param POINTER_TYPE
      * @return the pointer shadow image that is used in all gauges that have a centered pointer
@@ -3017,6 +3110,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the glasseffect with a centered knob
+     * 
      * @param WIDTH
      * @return the foreground image that will be used (in principle only the glass effect)
      */
@@ -3033,6 +3127,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the glasseffect and a centered knob if wanted
+     * 
      * @param WIDTH
      * @param WITH_CENTER_KNOB
      * @return the foreground image that will be used (in principle only the glass effect)
@@ -3050,36 +3145,42 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the image of the selected (FG_TYPE1, FG_TYPE2, FG_TYPE3) glasseffect, the centered knob (if wanted)
+     * 
      * @param WIDTH
      * @param WITH_CENTER_KNOB
      * @param TYPE
      * @return the foreground image that will be used
      */
-    protected BufferedImage create_FOREGROUND_Image(final int WIDTH, final boolean WITH_CENTER_KNOB, final ForegroundType TYPE) {
+    protected BufferedImage create_FOREGROUND_Image(
+        final int WIDTH, final boolean WITH_CENTER_KNOB, final ForegroundType TYPE) {
         return create_FOREGROUND_Image(WIDTH, WITH_CENTER_KNOB, TYPE, null);
     }
 
     /**
      * Returns the image of the selected (FG_TYPE1, FG_TYPE2, FG_TYPE3) glasseffect, the centered knob (if wanted)
+     * 
      * @param WIDTH
      * @param WITH_CENTER_KNOB
      * @param TYPE
      * @param IMAGE
      * @return the foreground image that will be used
      */
-    protected BufferedImage create_FOREGROUND_Image(final int WIDTH, final boolean WITH_CENTER_KNOB, final ForegroundType TYPE, final BufferedImage IMAGE) {
+    protected BufferedImage create_FOREGROUND_Image(
+        final int WIDTH, final boolean WITH_CENTER_KNOB, final ForegroundType TYPE, final BufferedImage IMAGE) {
         switch (getFrameType()) {
             case ROUND:
                 return FOREGROUND_FACTORY.createRadialForeground(WIDTH, WITH_CENTER_KNOB, TYPE, IMAGE);
             case SQUARE:
                 return FOREGROUND_FACTORY.createLinearForeground(WIDTH, WIDTH, WITH_CENTER_KNOB, IMAGE);
             default:
-                return FOREGROUND_FACTORY.createRadialForeground(WIDTH, WITH_CENTER_KNOB, ForegroundType.FG_TYPE1, IMAGE);
+                return FOREGROUND_FACTORY
+                    .createRadialForeground(WIDTH, WITH_CENTER_KNOB, ForegroundType.FG_TYPE1, IMAGE);
         }
     }
 
     /**
      * Returns the image that will be displayed if the gauge is disabled
+     * 
      * @param WIDTH
      * @return the disabled image that will be displayed if the gauge is disabled
      */
@@ -3090,9 +3191,8 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     // <editor-fold defaultstate="collapsed" desc="Size related methods">
     /**
-     * Calculates the rectangle that specifies the area that is available
-     * for painting the gauge. This means that if the component has insets
-     * that are larger than 0, these will be taken into account.
+     * Calculates the rectangle that specifies the area that is available for painting the gauge. This means that if the
+     * component has insets that are larger than 0, these will be taken into account.
      */
     @Override
     public void calcInnerBounds() {
@@ -3101,22 +3201,29 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     public void calcInnerBounds(final int WIDTH, final int HEIGHT) {
         final Insets INSETS = getInsets();
-        final int SIZE = (WIDTH - INSETS.left - INSETS.right) <= (HEIGHT - INSETS.top - INSETS.bottom) ? (WIDTH - INSETS.left - INSETS.right) : (HEIGHT - INSETS.top - INSETS.bottom);
-        INNER_BOUNDS.setBounds(INSETS.left, INSETS.top, WIDTH - INSETS.left - INSETS.right, HEIGHT - INSETS.top - INSETS.bottom);
+        final int SIZE =
+            (WIDTH - INSETS.left - INSETS.right) <= (HEIGHT - INSETS.top - INSETS.bottom)
+                ? (WIDTH - INSETS.left - INSETS.right) : (HEIGHT - INSETS.top - INSETS.bottom);
+        INNER_BOUNDS
+            .setBounds(INSETS.left, INSETS.top, WIDTH - INSETS.left - INSETS.right,
+                HEIGHT - INSETS.top - INSETS.bottom);
         if (!isFrameVisible()) {
-            GAUGE_BOUNDS.setBounds(INSETS.left, INSETS.top, (int)(SIZE * 1.202247191), (int)(SIZE * 1.202247191));
-        } else {
+            GAUGE_BOUNDS.setBounds(INSETS.left, INSETS.top, (int) (SIZE * 1.202247191), (int) (SIZE * 1.202247191));
+        }
+        else {
             GAUGE_BOUNDS.setBounds(INSETS.left, INSETS.top, SIZE, SIZE);
         }
-        FRAMELESS_BOUNDS.setBounds(INSETS.left + (int)(SIZE * 0.08411215245723724), INSETS.top + (int)(SIZE * 0.08411215245723724), (int)(SIZE * 0.8317756652832031), (int)(SIZE * 0.8317756652832031));
+        FRAMELESS_BOUNDS
+            .setBounds(INSETS.left + (int) (SIZE * 0.08411215245723724),
+                INSETS.top + (int) (SIZE * 0.08411215245723724), (int) (SIZE * 0.8317756652832031),
+                (int) (SIZE * 0.8317756652832031));
     }
 
     /**
-     * Returns the rectangle that specifies the area that is available
-     * for painting the gauge. This means that if the component has insets
-     * that are larger than 0, these will be taken into account.
-     * If you add a border to the component the gauge will be drawn smaller
-     * but within the border.
+     * Returns the rectangle that specifies the area that is available for painting the gauge. This means that if the
+     * component has insets that are larger than 0, these will be taken into account. If you add a border to the
+     * component the gauge will be drawn smaller but within the border.
+     * 
      * @return rectangle which describes the area that is available for painting
      */
     @Override
@@ -3151,7 +3258,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     @Override
     public void setMinimumSize(final Dimension DIM) {
-        int  width = DIM.width < 50 ? 50 : DIM.width;
+        int width = DIM.width < 50 ? 50 : DIM.width;
         int height = DIM.height < 50 ? 50 : DIM.height;
         final int SIZE = width <= height ? width : height;
         super.setMinimumSize(new Dimension(SIZE, SIZE));
@@ -3173,7 +3280,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     @Override
     public void setMaximumSize(final Dimension DIM) {
-        int  width = DIM.width > 1080 ? 1080 : DIM.width;
+        int width = DIM.width > 1080 ? 1080 : DIM.width;
         int height = DIM.height > 1080 ? 1080 : DIM.height;
         final int SIZE = width <= height ? width : height;
         super.setMaximumSize(new Dimension(SIZE, SIZE));
@@ -3218,7 +3325,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (BOUNDS.width <= BOUNDS.height) {
             // vertical
             int yNew;
-            switch(verticalAlignment) {
+            switch (verticalAlignment) {
                 case SwingConstants.TOP:
                     yNew = BOUNDS.y;
                     break;
@@ -3231,10 +3338,11 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                     break;
             }
             super.setBounds(BOUNDS.x, yNew, BOUNDS.width, BOUNDS.width);
-        } else {
+        }
+        else {
             // horizontal
             int xNew;
-            switch(horizontalAlignment) {
+            switch (horizontalAlignment) {
                 case SwingConstants.LEFT:
                     xNew = BOUNDS.x;
                     break;
@@ -3258,7 +3366,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if (WIDTH <= HEIGHT) {
             // vertical
             int yNew;
-            switch(verticalAlignment) {
+            switch (verticalAlignment) {
                 case SwingConstants.TOP:
                     yNew = Y;
                     break;
@@ -3271,10 +3379,11 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
                     break;
             }
             super.setBounds(X, yNew, WIDTH, WIDTH);
-        } else {
+        }
+        else {
             // horizontal
             int xNew;
-            switch(horizontalAlignment) {
+            switch (horizontalAlignment) {
                 case SwingConstants.LEFT:
                     xNew = X;
                     break;
@@ -3302,6 +3411,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the alignment of the radial gauge along the X axis.
+     * 
      * @return the alignment of the radial gauge along the X axis.
      */
     public int getHorizontalAlignment() {
@@ -3310,7 +3420,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the alignment of the radial gauge along the X axis.
-     * @param HORIZONTAL_ALIGNMENT (SwingConstants.CENTER is default)
+     * 
+     * @param HORIZONTAL_ALIGNMENT
+     *            (SwingConstants.CENTER is default)
      */
     public void setHorizontalAlignment(final int HORIZONTAL_ALIGNMENT) {
         horizontalAlignment = HORIZONTAL_ALIGNMENT;
@@ -3318,6 +3430,7 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Returns the alignment of the radial gauge along the Y axis.
+     * 
      * @return the alignment of the radial gauge along the Y axis.
      */
     public int getVerticalAlignment() {
@@ -3326,7 +3439,9 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
 
     /**
      * Sets the alignment of the radial gauge along the Y axis.
-     * @param VERTICAL_ALIGNMENT (SwingConstants.CENTER is default)
+     * 
+     * @param VERTICAL_ALIGNMENT
+     *            (SwingConstants.CENTER is default)
      */
     public void setVerticalAlignment(final int VERTICAL_ALIGNMENT) {
         verticalAlignment = VERTICAL_ALIGNMENT;
@@ -3341,15 +3456,18 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         if ((PARENT != null) && (PARENT.getLayout() == null)) {
             if (SIZE < getMinimumSize().width || SIZE < getMinimumSize().height) {
                 setSize(getMinimumSize());
-            } else {
+            }
+            else {
                 setSize(SIZE, SIZE);
             }
-        } else {
+        }
+        else {
             if (SIZE < getMinimumSize().width || SIZE < getMinimumSize().height) {
-                //setSize(getMinimumSize());
+                // setSize(getMinimumSize());
                 setPreferredSize(getMinimumSize());
-            } else {
-                //setSize(new Dimension(SIZE, SIZE));
+            }
+            else {
+                // setSize(new Dimension(SIZE, SIZE));
                 setPreferredSize(new Dimension(SIZE, SIZE));
             }
         }
@@ -3359,24 +3477,25 @@ public abstract class AbstractRadial extends AbstractGauge implements Lcd {
         recreateLedImages();
         if (isLedOn()) {
             setCurrentLedImage(getLedImageOn());
-        } else {
+        }
+        else {
             setCurrentLedImage(getLedImageOff());
         }
 
         recreateUserLedImages();
         if (isUserLedOn()) {
             setCurrentUserLedImage(getUserLedImageOn());
-        } else {
+        }
+        else {
             setCurrentUserLedImage(getUserLedImageOff());
         }
 
         getModel().setSize(getLocation().x, getLocation().y, SIZE, SIZE);
         init(getInnerBounds().width, getInnerBounds().height);
-        //revalidate();
-        //repaint();
+        // revalidate();
+        // repaint();
     }
     // </editor-fold>
-
 
     // <editor-fold defaultstate="collapsed" desc="ActionListener method">
     @Override
