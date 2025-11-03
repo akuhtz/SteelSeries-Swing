@@ -14,6 +14,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<surefire.version>3.5.4</surefire.version>
+		
+		<trident.version>7.3</trident.version>
+		<junit-jupiter.version>5.12.2</junit-jupiter.version>
 	</properties>
 
 	<repositories>
@@ -64,20 +67,22 @@
 		<dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-			<version>5.12.2</version>
+			<version>${junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.insubstantial</groupId>
 			<artifactId>trident</artifactId>
-			<version>6.3</version>
+			<version>${trident.version}</version>
 		</dependency>
 	</dependencies>
+	
 	<description>The SteelSeries is a javabeans component library that contains gauges.
 You will find linear and radial gauges. In addition you will also find
 digital displays, indicators from cars and some instruments from airplanes and
 sailboats.
-  </description>
+	</description>
+	
 	<developers>
 		<developer>
 			<name>Gerrit Grunwald</name>
@@ -89,6 +94,7 @@ sailboats.
 			</roles>
 		</developer>
 	</developers>
+
 	<licenses>
 		<license>
 			<name>BSD license</name>
@@ -96,12 +102,14 @@ sailboats.
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
 	<scm>
 		<!-- settings for trunk - should match when checking out from trunk! -->
 		<connection>scm:git:git@github.com:akuhtz/SteelSeries-Swing.git</connection>
 		<developerConnection>scm:git:git@github.com:akuhtz/SteelSeries-Swing.git</developerConnection>
 		<url>https://github.com/akuhtz/SteelSeries-Swing</url>
 	</scm>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -238,6 +246,7 @@ sailboats.
 			</plugin>
 		</plugins>
 	</build>
+
 	<profiles>
 		<profile>
 			<id>release-sign-artifacts</id>
